@@ -19,10 +19,6 @@ public class Application {
 
   private Map<String, String> studentMap = new HashMap<>();
 
-  public Application() {
-    studentMap.put("Rick", "24");
-  }
-
 
   //try to add and update students inside the map
 
@@ -37,12 +33,8 @@ public class Application {
   public Map<String, String> getMapInfo() {
     return studentMap;
   }
-  //AI generated section for attempts
+
   //{"timestamp":"2025-10-21T00:03:16.351+00:00","status":400,"error":"Bad Request","path":"/mapInfo"}
-  @PostMapping("/mapInfo")
-  public void addStudent(@RequestBody Map<String, String> newEntry) {
-    studentMap.putAll(newEntry); // <-- This is the fix! **Gemini**
-  }
 
   @GetMapping("/studentInfo")
   public String getStudentInfo() {
