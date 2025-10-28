@@ -48,4 +48,6 @@ out/
 ## Miscellaneous
 
 *.log
-src/main/resources/application.properties
+application.properties
+workspace.xml
+
