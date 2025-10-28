@@ -33,7 +33,7 @@ public class StudentController {
     return service.filterStudentList();
   }
 
-  @GetMapping("filterCourseList")
+  @GetMapping("/filterCourseList")
   public List<StudentCourse> getCourFilterList() {
     return service.filterCourseList();
   }
