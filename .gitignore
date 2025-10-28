@@ -1,5 +1,4 @@
 ## Java
-
 .mtj.tmp/
 *.class
 *.jar
@@ -9,9 +8,7 @@
 hs_err_pid*
 replay_pid*
 
-
 ## Maven
-
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -25,7 +22,6 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
 ## Gradle
-
 bin/
 build/
 .gradle
@@ -50,4 +46,3 @@ out/
 *.log
 application.properties
 workspace.xml
-
