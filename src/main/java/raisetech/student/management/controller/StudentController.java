@@ -1,14 +1,12 @@
 package raisetech.student.management.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.controller.converter.StudentConverter;
-import raisetech.student.management.data.Student;
-import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.data.StudentEntity;
+import raisetech.student.management.data.CourseEnrollmentEntity;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.StudentService;
 
@@ -26,24 +24,24 @@ public class StudentController {
 
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
-    List<Student> students = service.searchStudentList();
-    List<StudentCourse> studentCourses = service.searchStudentCourse();
+    List<StudentEntity> students = service.searchStudentList();
+    List<CourseEnrollmentEntity> studentCourses = service.searchStudentCourse();
 
     return converter.convertStudentDetails(students, studentCourses);
   }
 
   @GetMapping("/courseList")
-  public List<StudentCourse> getStudentCourse() {
+  public List<CourseEnrollmentEntity> getStudentCourse() {
     return service.searchStudentCourse();
   }
 
   @GetMapping("/filterStudentList")
-  public List<Student> getStuFilterList() {
+  public List<StudentEntity> getStuFilterList() {
     return service.filterStudentList();
   }
 
   @GetMapping("/filterCourseList")
-  public List<StudentCourse> getCourFilterList() {
+  public List<CourseEnrollmentEntity> getCourFilterList() {
     return service.filterCourseList();
   }
 

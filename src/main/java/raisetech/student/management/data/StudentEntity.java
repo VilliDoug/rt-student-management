@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class Student {
+public class StudentEntity {
 
   private String id;
   private String name;
@@ -17,5 +17,5 @@ public class Student {
   private int age;
   private String gender;
   private String remark;
-  private boolean isDeleted;
+  private boolean wasDeleted;
   }
