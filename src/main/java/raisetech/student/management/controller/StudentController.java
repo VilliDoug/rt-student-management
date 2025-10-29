@@ -36,12 +36,12 @@ public class StudentController {
   }
 
   @GetMapping("/filterStudentList")
-  public List<StudentEntity> getStuFilterList() {
+  public List<StudentEntity> getFilteredStudents() {
     return service.filterStudentList();
   }
 
   @GetMapping("/filterCourseList")
-  public List<CourseEnrollmentEntity> getCourFilterList() {
+  public List<CourseEnrollmentEntity> getFilteredCourses() {
     return service.filterCourseList();
   }
 
