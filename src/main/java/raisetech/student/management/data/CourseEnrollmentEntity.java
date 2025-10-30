@@ -1,5 +1,6 @@
 package raisetech.student.management.data;
 
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
