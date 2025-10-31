@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import raisetech.student.management.data.StudentEntity;
 import raisetech.student.management.data.CourseEnrollmentEntity;
+import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.repository.StudentRepository;
 
 @Service
@@ -28,6 +29,21 @@ public class StudentService {
         .filter(n -> n.getAge() >= 25)
         .collect(Collectors.toList());
     return filteredStudentList;
+  }
+
+  //　このコードに対して、Geminiを使いながら作成。オブジェクト作り、IDをgetする、
+  // 自分から出来なったことをヒント出してくれたりしました。
+  //　変数やメソッド呼び出すことはよく違いものを使ったりしていましたが、今回の課題は7・8割ミスなしでした。
+  // AIを使いすぎることに不安はありますが、学習モードにしたら逆にいいと思っていります。
+  public void newRegisterStudentEntity(StudentDetail newStudentDetail) {
+    StudentEntity student = newStudentDetail.getStudent();
+    List<CourseEnrollmentEntity> enrollment = newStudentDetail.getStudentCourses();
+    repository.registerStudentEntity(student);
+    String newStudentId = student.getId();
+    for (CourseEnrollmentEntity newEnrollment : enrollment) {
+      newEnrollment.setStudentId(newStudentId);
+      repository.registerCourseEnrollment(newEnrollment);
+    }
   }
 
   public List<CourseEnrollmentEntity> filterCourseList() {
