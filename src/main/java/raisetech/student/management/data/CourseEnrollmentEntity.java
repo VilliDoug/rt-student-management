@@ -1,6 +1,5 @@
 package raisetech.student.management.data;
 
-import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +15,3 @@ public class CourseEnrollmentEntity {
   private String courseEndAt;
 
 }
-
-
-//課題
-//受講生コース情報を全権を取ってくること
