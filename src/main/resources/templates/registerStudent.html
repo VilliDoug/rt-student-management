@@ -10,6 +10,7 @@
   <div>
     <label for="name">名前：</label>
     <input type="text" id="name" th:field="*{student.name}" required/>
+    <span th:errors="*{student.name}" style="color: red;"></span>
   </div>
   <div>
     <label for="courseName">コース名：</label>

@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.data.StudentEntity;
 import raisetech.student.management.data.CourseEnrollmentEntity;
 import raisetech.student.management.domain.StudentDetail;
@@ -35,6 +36,7 @@ public class StudentService {
   // 自分から出来なったことをヒント出してくれたりしました。
   //　変数やメソッド呼び出すことはよく違いものを使ったりしていましたが、今回の課題は7・8割ミスなしでした。
   // AIを使いすぎることに不安はありますが、学習モードにしたら逆にいいと思っていります。
+  @Transactional
   public void newRegisterStudentEntity(StudentDetail newStudentDetail) {
     StudentEntity student = newStudentDetail.getStudent();
     List<CourseEnrollmentEntity> enrollment = newStudentDetail.getStudentCourses();
