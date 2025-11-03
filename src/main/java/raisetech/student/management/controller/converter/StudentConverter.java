@@ -40,4 +40,16 @@ public class StudentConverter {
     });
     return details;
   }
+
+  public StudentDetail convertSingleStudentDetail
+      (StudentEntity student, List<CourseEnrollmentEntity> studentCourses)  {
+    StudentDetail singleStudentDetail = new StudentDetail();
+    singleStudentDetail.setStudent(student);
+    singleStudentDetail.setStudentCourses(studentCourses);
+    if (student == null) {
+//      return
+    }
+    return singleStudentDetail;
+  }
+
 }

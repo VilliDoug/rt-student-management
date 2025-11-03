@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.data.StudentEntity;
 import raisetech.student.management.data.CourseEnrollmentEntity;
 import raisetech.student.management.domain.StudentDetail;
@@ -16,6 +17,9 @@ import raisetech.student.management.repository.StudentRepository;
 public class StudentService {
 
   private StudentRepository repository;
+
+  @Autowired
+  private StudentConverter converter;
 
   @Autowired
   public StudentService(StudentRepository repository) {
@@ -52,6 +56,21 @@ public class StudentService {
 
   public List<CourseEnrollmentEntity> searchStudentCourse() {
     return repository.searchCourses();
+  }
+
+//  New service to fetch only ONE student entity
+  public StudentDetail searchByStudentId(String id) {
+    StudentEntity singleStudentEntity = repository.fetchByStudentId(id);
+    List<CourseEnrollmentEntity> allCourses = repository.searchCourses();
+    List<CourseEnrollmentEntity> studentFilterCourses = allCourses.stream()
+        .filter(courseEnrollment -> Objects.equals(singleStudentEntity.getId(), courseEnrollment.getStudentId()))
+        .collect(Collectors.toList());
+    return converter.convertSingleStudentDetail(singleStudentEntity, studentFilterCourses);
+  }
+
+  @Transactional
+  public void updateStudentDetails (StudentDetail studentDetail) {
+    repository.updateStudentEntity(studentDetail.getStudent());
   }
 
 

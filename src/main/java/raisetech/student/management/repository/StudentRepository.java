@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import raisetech.student.management.data.StudentEntity;
 import raisetech.student.management.data.CourseEnrollmentEntity;
 
@@ -26,7 +27,30 @@ public interface StudentRepository {
   @Insert("INSERT INTO student_courses (student_id, course_name, course_start_at, course_end_at) "
       + "VALUES (#{studentId}, #{courseName}, #{courseStartAt}, #{courseEndAt})")
   @Options(useGeneratedKeys = true, keyProperty = "id")
-
   void registerCourseEnrollment (CourseEnrollmentEntity courseEnrollmentEntity);
+
+//  new @SELECT to pull from DB by ID link
+  @Select("SELECT * FROM students WHERE id = #{id}")
+  StudentEntity fetchByStudentId(String id);
+
+//  new UPDATE to update new information through updateStudent
+//  !!! """ !!!! to help writing multiple lines of text without opening and closing all the time
+  @Update("""
+    UPDATE students SET
+        name = #{name},
+        kana_name = #{kanaName},
+        nickname = #{nickname},
+        email_address = #{emailAddress},
+        residence = #{residence},
+        age = #{age},
+        gender = #{gender},
+        remark = #{remark}
+    WHERE
+        id = #{id}
+""")
+  void updateStudentEntity(StudentEntity student);
+
+
+
 
 }

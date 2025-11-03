@@ -17,6 +17,7 @@
     <th>年齢</th>
     <th>性別</th>
     <th>備考</th>
+    <th>情報更新</th>
   </tr>
   </thead>
   <tbody>
@@ -26,10 +27,14 @@
     <td th:text="${studentDetail.student.kanaName}">トミーバンズ</td>
     <td th:text="${studentDetail.student.nickname}">Tommy</td>
     <td th:text="${studentDetail.student.emailAddress}">t.buns@email.com</td>
-    <td th:text="${studentDetail.student.region}">Bristol</td>
+    <td th:text="${studentDetail.student.residence}">Bristol</td>
     <td th:text="${studentDetail.student.age}">31</td>
     <td th:text="${studentDetail.student.gender}">Male</td>
     <td th:text="${studentDetail.student.remark}">None</td>
+<!-- Update link -->
+    <td>
+      <a th:href="@{/updateStudent( id = ${studentDetail.student.id})}">更新</a>
+    </td>
   </tr>
   </tbody>
 </table>
