@@ -35,16 +35,10 @@ public interface StudentRepository {
 
 //  new UPDATE to update new information through updateStudent
 //  !!! """ !!!! to help writing multiple lines of text without opening and closing all the time - apparently not :D
-  @Update("UPDATE students"
-      + "SET name = #{name},"
-      + "kana_name = #{kanaName},"
-      + "nickname = #{nickname},"
-      + "email_address = #{emailAddress},"
-      + "residence = #{residence},"
-      + "age = #{age},"
-      + "gender = #{gender},"
-      + "remark = #{remark},"
-      + "WHERE id = #{id}")
+  @Update("UPDATE students SET name = #{name}, kana_name = #{kanaName}, nickname = #{nickname}, email_address = #{emailAddress}, "
+      + "residence = #{residence}, age = #{age}, gender = #{gender}, remark = #{remark}"
+      //add a space...fml
+      + " WHERE id = #{id}")
   void updateStudentEntity(StudentEntity student);
 
 

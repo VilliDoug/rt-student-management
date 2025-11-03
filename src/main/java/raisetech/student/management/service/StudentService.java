@@ -12,6 +12,7 @@ import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.data.StudentEntity;
 import raisetech.student.management.data.CourseEnrollmentEntity;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.domain.StudentNotFoundException;
 import raisetech.student.management.repository.StudentRepository;
 
 @Service
@@ -62,10 +63,9 @@ public class StudentService {
 //  New service to fetch only ONE student entity
   public StudentDetail searchByStudentId(String id) {
     //Necessary object to check for NPE
-    StudentDetail emptyDetail = new StudentDetail();
     StudentEntity singleStudentEntity = repository.fetchByStudentId(id);
     if (singleStudentEntity == null) {
-      return emptyDetail;
+      throw new StudentNotFoundException("ID" + id + "の受講生を見つかりませんでした。");
     }
     //New line to check for NPE in the list as well
     List<CourseEnrollmentEntity> allCourses = java.util.Objects.requireNonNullElse
