@@ -78,7 +78,11 @@
     </label>
   </div>
   <div>
-    <button type="submit">登録</button>
+    <label th:for="wasDeleted">情報を削除<input type="checkbox" th:field="*{student.wasDeleted}" />
+    </label>
+  </div>
+  <div>
+    <button type="submit">更新</button>
   </div>
 </form>
 </body>

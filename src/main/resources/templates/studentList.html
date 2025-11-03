@@ -25,7 +25,7 @@
   </tr>
   </thead>
   <tbody>
-  <tr th:each="studentDetail : ${studentList}">
+  <tr th:each="studentDetail : ${studentList}" th:unless="${studentDetail.student.wasDeleted} == true">
     <td th:text="${studentDetail.student.id}">placeholder</td>
     <td th:text="${studentDetail.student.name}">placeholder</td>
     <td th:text="${studentDetail.student.kanaName}">placeholder</td>
