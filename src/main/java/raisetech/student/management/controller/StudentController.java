@@ -5,13 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.data.StudentEntity;
 import raisetech.student.management.data.CourseEnrollmentEntity;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.domain.StudentNotFoundException;
 import raisetech.student.management.service.StudentService;
 
 @Controller
@@ -30,7 +34,6 @@ public class StudentController {
   public String getStudentList(Model model) {
     List<StudentEntity> students = service.searchStudentList();
     List<CourseEnrollmentEntity> studentCourses = service.searchStudentCourse();
-
     model.addAttribute("studentList", converter.convertStudentDetails(students, studentCourses));
     return "studentList";
   }
@@ -69,6 +72,28 @@ public class StudentController {
   @GetMapping("/homePage")
   public String goHomePage(Model model) {
     return "homePage";
+  }
+
+  @GetMapping("/updateStudent")
+  public String goUpdateStudent(@RequestParam String id, Model model) {
+    StudentDetail matchStudentId = service.searchByStudentId(id);
+    model.addAttribute("updateStudentDetail", matchStudentId);
+    return "updateStudent";
+  }
+
+  @PostMapping("/updateStudent")
+  public String updateStudent(@ModelAttribute StudentDetail updateStudentEntity, BindingResult result) {
+    if (result.hasErrors()) {
+      return "updateStudent";
+    }
+    service.updateStudentDetails(updateStudentEntity);
+    return "redirect:/studentList";
+  }
+  //here we go again lads. What even is RedirectAttributes?
+  @ExceptionHandler(StudentNotFoundException.class)
+  public String handleNotFoundException(StudentNotFoundException ex, RedirectAttributes redirectAttributes) {
+    redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+    return "redirect:/studentList";
   }
 
 }

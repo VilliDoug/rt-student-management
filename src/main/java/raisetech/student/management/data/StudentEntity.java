@@ -13,7 +13,7 @@ public class StudentEntity {
   private String kanaName;
   private String nickname;
   private String emailAddress;
-  private String region;
+  private String residence;
   private int age;
   private String gender;
   private String remark;

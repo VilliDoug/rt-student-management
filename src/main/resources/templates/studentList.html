@@ -5,6 +5,10 @@
 </head>
 <body>
 <h1>受講生情報一覧</h1>
+<!--throw a fit, like I am about to-->
+<div th:if="${errorMessage}" class="error-message-alert">
+  <p th:text="${errorMessage}"></p>
+</div>
 <table border="1">
   <thead>
   <tr>
@@ -17,19 +21,24 @@
     <th>年齢</th>
     <th>性別</th>
     <th>備考</th>
+    <th>情報更新</th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="studentDetail : ${studentList}">
-    <td th:text="${studentDetail.student.id}">1</td>
-    <td th:text="${studentDetail.student.name}">Tommy Buns</td>
-    <td th:text="${studentDetail.student.kanaName}">トミーバンズ</td>
-    <td th:text="${studentDetail.student.nickname}">Tommy</td>
-    <td th:text="${studentDetail.student.emailAddress}">t.buns@email.com</td>
-    <td th:text="${studentDetail.student.region}">Bristol</td>
-    <td th:text="${studentDetail.student.age}">31</td>
-    <td th:text="${studentDetail.student.gender}">Male</td>
-    <td th:text="${studentDetail.student.remark}">None</td>
+    <td th:text="${studentDetail.student.id}">placeholder</td>
+    <td th:text="${studentDetail.student.name}">placeholder</td>
+    <td th:text="${studentDetail.student.kanaName}">placeholder</td>
+    <td th:text="${studentDetail.student.nickname}">placeholder</td>
+    <td th:text="${studentDetail.student.emailAddress}">placeholder</td>
+    <td th:text="${studentDetail.student.residence}">placeholder</td>
+    <td th:text="${studentDetail.student.age}">placeholder</td>
+    <td th:text="${studentDetail.student.gender}">placeholder</td>
+    <td th:text="${studentDetail.student.remark}">placeholder</td>
+<!-- Update link -->
+    <td>
+      <a th:href="@{/updateStudent( id = ${studentDetail.student.id})}">更新</a>
+    </td>
   </tr>
   </tbody>
 </table>
