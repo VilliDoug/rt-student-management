@@ -1,6 +1,7 @@
 package raisetech.student.management.service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -60,10 +61,18 @@ public class StudentService {
 
 //  New service to fetch only ONE student entity
   public StudentDetail searchByStudentId(String id) {
+    //Necessary object to check for NPE
+    StudentDetail emptyDetail = new StudentDetail();
     StudentEntity singleStudentEntity = repository.fetchByStudentId(id);
-    List<CourseEnrollmentEntity> allCourses = repository.searchCourses();
+    if (singleStudentEntity == null) {
+      return emptyDetail;
+    }
+    //New line to check for NPE in the list as well
+    List<CourseEnrollmentEntity> allCourses = java.util.Objects.requireNonNullElse
+        (repository.searchCourses(),Collections.emptyList());
     List<CourseEnrollmentEntity> studentFilterCourses = allCourses.stream()
-        .filter(courseEnrollment -> Objects.equals(singleStudentEntity.getId(), courseEnrollment.getStudentId()))
+        .filter(courseEnrollment ->
+            Objects.equals(singleStudentEntity.getId(), courseEnrollment.getStudentId()))
         .collect(Collectors.toList());
     return converter.convertSingleStudentDetail(singleStudentEntity, studentFilterCourses);
   }

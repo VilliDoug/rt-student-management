@@ -44,11 +44,12 @@ public class StudentConverter {
   public StudentDetail convertSingleStudentDetail
       (StudentEntity student, List<CourseEnrollmentEntity> studentCourses)  {
     StudentDetail singleStudentDetail = new StudentDetail();
-    singleStudentDetail.setStudent(student);
-    singleStudentDetail.setStudentCourses(studentCourses);
     if (student == null) {
-//      return
+      return singleStudentDetail;
     }
+    singleStudentDetail.setStudent(student);
+//    this is a less cluttered, more modern way to do what was done in NPE checker #2 above. Nice
+    singleStudentDetail.setStudentCourses(java.util.Objects.requireNonNullElse(studentCourses, Collections.emptyList()));
     return singleStudentDetail;
   }
 

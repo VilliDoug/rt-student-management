@@ -18,8 +18,8 @@ public interface StudentRepository {
   @Select("SELECT * FROM student_courses")
   List<CourseEnrollmentEntity> searchCourses();
 
-  @Insert("INSERT INTO students (name, kana_name, nickname, email_address, region, age, gender, remark, was_deleted)"
-      + " VALUES (#{name}, #{kanaName}, #{nickname}, #{emailAddress}, #{region}, #{age}, #{gender}, #{remark}, false)")
+  @Insert("INSERT INTO students (name, kana_name, nickname, email_address, residence, age, gender, remark, was_deleted)"
+      + " VALUES (#{name}, #{kanaName}, #{nickname}, #{emailAddress}, #{residence}, #{age}, #{gender}, #{remark}, false)")
   //Switched id column to generate keys with AUTO_INCREMENT
   @Options(useGeneratedKeys = true, keyProperty = "id")
   void registerStudentEntity(StudentEntity student);
@@ -34,20 +34,17 @@ public interface StudentRepository {
   StudentEntity fetchByStudentId(String id);
 
 //  new UPDATE to update new information through updateStudent
-//  !!! """ !!!! to help writing multiple lines of text without opening and closing all the time
-  @Update("""
-    UPDATE students SET
-        name = #{name},
-        kana_name = #{kanaName},
-        nickname = #{nickname},
-        email_address = #{emailAddress},
-        residence = #{residence},
-        age = #{age},
-        gender = #{gender},
-        remark = #{remark}
-    WHERE
-        id = #{id}
-""")
+//  !!! """ !!!! to help writing multiple lines of text without opening and closing all the time - apparently not :D
+  @Update("UPDATE students"
+      + "SET name = #{name},"
+      + "kana_name = #{kanaName},"
+      + "nickname = #{nickname},"
+      + "email_address = #{emailAddress},"
+      + "residence = #{residence},"
+      + "age = #{age},"
+      + "gender = #{gender},"
+      + "remark = #{remark},"
+      + "WHERE id = #{id}")
   void updateStudentEntity(StudentEntity student);
 
 
