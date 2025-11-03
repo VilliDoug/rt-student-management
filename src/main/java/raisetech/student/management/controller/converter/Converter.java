@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
-import raisetech.student.management.data.StudentEntity;
-import raisetech.student.management.data.CourseEnrollmentEntity;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.Course;
 import raisetech.student.management.domain.StudentDetail;
 
 @Component
-public class StudentConverter {
+public class Converter {
 
   public List<StudentDetail> convertStudentDetails(
-      List<StudentEntity> studentEntities,
-      List<CourseEnrollmentEntity> allEnrollments) {
+      List<Student> studentEntities,
+      List<Course> allEnrollments) {
 
     //NPE checker #1 for studentEntities
     if (studentEntities == null || studentEntities.isEmpty()) {
@@ -23,7 +23,7 @@ public class StudentConverter {
     }
 
     //NPE checker #2 for allEnrollments
-    List<CourseEnrollmentEntity> safeEnrollments = allEnrollments != null ? allEnrollments : Collections.emptyList();
+    List<Course> safeEnrollments = allEnrollments != null ? allEnrollments : Collections.emptyList();
 
     List<StudentDetail> details = new ArrayList<>();
 
@@ -31,7 +31,7 @@ public class StudentConverter {
       StudentDetail studentDetail = new StudentDetail();
       studentDetail.setStudent(currentStudent);
 
-      List<CourseEnrollmentEntity> matchingEnrollments = safeEnrollments.stream()
+      List<Course> matchingEnrollments = safeEnrollments.stream()
           .filter (enrollment -> Objects.equals(currentStudent.getId(), enrollment.getStudentId()))
           .collect(Collectors.toList());
 
@@ -42,7 +42,7 @@ public class StudentConverter {
   }
 
   public StudentDetail convertSingleStudentDetail
-      (StudentEntity student, List<CourseEnrollmentEntity> studentCourses)  {
+      (Student student, List<Course> studentCourses)  {
     StudentDetail singleStudentDetail = new StudentDetail();
     if (student == null) {
       return singleStudentDetail;

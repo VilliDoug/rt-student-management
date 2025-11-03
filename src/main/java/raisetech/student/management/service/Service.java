@@ -6,34 +6,33 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import raisetech.student.management.controller.converter.StudentConverter;
-import raisetech.student.management.data.StudentEntity;
-import raisetech.student.management.data.CourseEnrollmentEntity;
+import raisetech.student.management.controller.converter.Converter;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.Course;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.domain.StudentNotFoundException;
-import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.repository.Repository;
 
-@Service
-public class StudentService {
+@org.springframework.stereotype.Service
+public class Service {
 
-  private StudentRepository repository;
-
-  @Autowired
-  private StudentConverter converter;
+  private Repository repository;
 
   @Autowired
-  public StudentService(StudentRepository repository) {
+  private Converter converter;
+
+  @Autowired
+  public Service(Repository repository) {
     this.repository = repository;
   }
 
-  public List<StudentEntity> searchStudentList() {
-    return repository.searchStudents();
+  public List<Student> searchStudentList() {
+    return repository.searchStudent();
   }
 
-  public List<StudentEntity> filterStudentList() {
-    List<StudentEntity> filteredStudentList = repository.searchStudents().stream()
+  public List<Student> filterStudentList() {
+    List<Student> filteredStudentList = repository.searchStudent().stream()
         .filter(n -> n.getAge() >= 25)
         .collect(Collectors.toList());
     return filteredStudentList;
@@ -42,39 +41,39 @@ public class StudentService {
   @Transactional
   public void newRegisterStudentEntity(StudentDetail newStudentDetail) {
     repository.registerStudentEntity(newStudentDetail.getStudent());
-    for (CourseEnrollmentEntity newCourseEnrollment : newStudentDetail.getStudentCourses()) {
+    for (Course newCourseEnrollment : newStudentDetail.getStudentCourses()) {
       newCourseEnrollment.setStudentId(newStudentDetail.getStudent().getId());
       newCourseEnrollment.setCourseStartAt(String.valueOf(LocalDate.now()));
       repository.registerCourseEnrollment(newCourseEnrollment);
     }
   }
 
-  public List<CourseEnrollmentEntity> filterCourseList() {
-    List<CourseEnrollmentEntity> filteredCourseList = repository.searchCourses().stream()
+  public List<Course> filterCourseList() {
+    List<Course> filteredCourseList = repository.searchCourse().stream()
       .filter(n -> Objects.equals("Java Course", n.getCourseName()))
       .collect(Collectors.toList());
     return filteredCourseList;
   }
 
-  public List<CourseEnrollmentEntity> searchStudentCourse() {
-    return repository.searchCourses();
+  public List<Course> searchStudentCourse() {
+    return repository.searchCourse();
   }
 
 //  New service to fetch only ONE student entity
   public StudentDetail searchByStudentId(String id) {
     //Necessary object to check for NPE
-    StudentEntity singleStudentEntity = repository.fetchByStudentId(id);
-    if (singleStudentEntity == null) {
+    Student singleStudent = repository.fetchById(id);
+    if (singleStudent == null) {
       throw new StudentNotFoundException("ID" + id + "の受講生を見つかりませんでした。");
     }
     //New line to check for NPE in the list as well
-    List<CourseEnrollmentEntity> allCourses = java.util.Objects.requireNonNullElse
-        (repository.searchCourses(),Collections.emptyList());
-    List<CourseEnrollmentEntity> studentFilterCourses = allCourses.stream()
+    List<Course> allCourses = java.util.Objects.requireNonNullElse
+        (repository.searchCourse(),Collections.emptyList());
+    List<Course> studentFilterCourses = allCourses.stream()
         .filter(courseEnrollment ->
-            Objects.equals(singleStudentEntity.getId(), courseEnrollment.getStudentId()))
+            Objects.equals(singleStudent.getId(), courseEnrollment.getStudentId()))
         .collect(Collectors.toList());
-    return converter.convertSingleStudentDetail(singleStudentEntity, studentFilterCourses);
+    return converter.convertSingleStudentDetail(singleStudent, studentFilterCourses);
   }
 
   @Transactional
