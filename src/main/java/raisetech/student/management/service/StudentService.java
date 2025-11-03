@@ -1,5 +1,6 @@
 package raisetech.student.management.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,19 +33,13 @@ public class StudentService {
     return filteredStudentList;
   }
 
-  //　このコードに対して、Geminiを使いながら作成。オブジェクト作り、IDをgetする、
-  // 自分から出来なったことをヒント出してくれたりしました。
-  //　変数やメソッド呼び出すことはよく違いものを使ったりしていましたが、今回の課題は7・8割ミスなしでした。
-  // AIを使いすぎることに不安はありますが、学習モードにしたら逆にいいと思っていります。
   @Transactional
   public void newRegisterStudentEntity(StudentDetail newStudentDetail) {
-    StudentEntity student = newStudentDetail.getStudent();
-    List<CourseEnrollmentEntity> enrollment = newStudentDetail.getStudentCourses();
-    repository.registerStudentEntity(student);
-    String newStudentId = student.getId();
-    for (CourseEnrollmentEntity newEnrollment : enrollment) {
-      newEnrollment.setStudentId(newStudentId);
-      repository.registerCourseEnrollment(newEnrollment);
+    repository.registerStudentEntity(newStudentDetail.getStudent());
+    for (CourseEnrollmentEntity newCourseEnrollment : newStudentDetail.getStudentCourses()) {
+      newCourseEnrollment.setStudentId(newStudentDetail.getStudent().getId());
+      newCourseEnrollment.setCourseStartAt(String.valueOf(LocalDate.now()));
+      repository.registerCourseEnrollment(newCourseEnrollment);
     }
   }
 

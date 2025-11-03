@@ -17,12 +17,16 @@ public interface StudentRepository {
   @Select("SELECT * FROM student_courses")
   List<CourseEnrollmentEntity> searchCourses();
 
-  @Insert("INSERT INTO students (name) VALUES (#{name})")
+  @Insert("INSERT INTO students (name, kana_name, nickname, email_address, region, age, gender, remark, was_deleted)"
+      + " VALUES (#{name}, #{kanaName}, #{nickname}, #{emailAddress}, #{region}, #{age}, #{gender}, #{remark}, false)")
   //Switched id column to generate keys with AUTO_INCREMENT
   @Options(useGeneratedKeys = true, keyProperty = "id")
   void registerStudentEntity(StudentEntity student);
 
-  @Insert("INSERT INTO student_courses (student_id, course_name) VALUES (#{studentId}, #{courseName})")
-  void registerCourseEnrollment (CourseEnrollmentEntity course);
+  @Insert("INSERT INTO student_courses (student_id, course_name, course_start_at, course_end_at) "
+      + "VALUES (#{studentId}, #{courseName}, #{courseStartAt}, #{courseEndAt})")
+  @Options(useGeneratedKeys = true, keyProperty = "id")
+
+  void registerCourseEnrollment (CourseEnrollmentEntity courseEnrollmentEntity);
 
 }
