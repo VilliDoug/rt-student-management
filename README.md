@@ -1,2 +1,2 @@
 # rt-student-management
-Webアプリ開発の学習に関係するレポジトリー
+RaiseTech Javaコースの課題をPRで提出するためにこのレポジトリー作りました。
