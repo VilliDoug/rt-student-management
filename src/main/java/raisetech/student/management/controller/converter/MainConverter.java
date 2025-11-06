@@ -11,28 +11,28 @@ import raisetech.student.management.data.Course;
 import raisetech.student.management.domain.StudentDetail;
 
 @Component
-public class Converter {
+public class MainConverter {
 
   public List<StudentDetail> convertStudentDetails(
       List<Student> studentEntities,
-      List<Course> allEnrollments) {
+      List<Course> enrollments) {
 
     //NPE checker #1 for studentEntities
     if (studentEntities == null || studentEntities.isEmpty()) {
       return Collections.emptyList();
     }
 
-    //NPE checker #2 for allEnrollments
-    List<Course> safeEnrollments = allEnrollments != null ? allEnrollments : Collections.emptyList();
+    //NPE checker #2 for enrollments
+    List<Course> safeEnrollments = enrollments != null ? enrollments : Collections.emptyList();
 
     List<StudentDetail> details = new ArrayList<>();
 
-    studentEntities.forEach(currentStudent -> {
+    studentEntities.forEach(student -> {
       StudentDetail studentDetail = new StudentDetail();
-      studentDetail.setStudent(currentStudent);
+      studentDetail.setStudent(student);
 
       List<Course> matchingEnrollments = safeEnrollments.stream()
-          .filter (enrollment -> Objects.equals(currentStudent.getId(), enrollment.getStudentId()))
+          .filter (enrollment -> Objects.equals(student.getId(), enrollment.getStudentId()))
           .collect(Collectors.toList());
 
       studentDetail.setStudentCourses(matchingEnrollments);

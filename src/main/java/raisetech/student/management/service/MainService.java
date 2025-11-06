@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import raisetech.student.management.controller.converter.Converter;
+import raisetech.student.management.controller.converter.MainConverter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.domain.StudentDetail;
@@ -21,7 +21,7 @@ public class MainService {
   private Repository repository;
 
   @Autowired
-  private Converter converter;
+  private MainConverter converter;
 
   @Autowired
   public MainService(Repository repository) {
