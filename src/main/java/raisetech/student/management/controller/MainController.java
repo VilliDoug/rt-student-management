@@ -2,40 +2,35 @@ package raisetech.student.management.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import raisetech.student.management.controller.converter.Converter;
+import raisetech.student.management.controller.converter.MainConverter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.domain.StudentNotFoundException;
 import raisetech.student.management.service.MainService;
 
-@Controller
+@RestController
 public class MainController {
 
   private MainService service;
-  private Converter converter;
+  private MainConverter converter;
 
   @Autowired
-  public MainController(MainService service, Converter converter) {
+  public MainController(MainService service, MainConverter converter) {
     this.service = service;
     this.converter = converter;
-  }
-
-  @GetMapping("/studentList")
-  public String getStudentList(Model model) {
-    List<Student> students = service.searchStudentList();
-    List<Course> studentCourses = service.searchStudentCourse();
-    model.addAttribute("studentList", converter.convertStudentDetails(students, studentCourses));
-    return "studentList";
   }
 
   @GetMapping("/courseList")
@@ -74,26 +69,18 @@ public class MainController {
     return "homePage";
   }
 
-  @GetMapping("/updateStudent")
-  public String goUpdateStudent(@RequestParam String id, Model model) {
-    StudentDetail matchStudentId = service.searchByStudentId(id);
-    model.addAttribute("updateStudentDetail", matchStudentId);
-    return "updateStudent";
+//  NEW CODE - LESSON 33
+  @GetMapping("/studentList")
+  public List<StudentDetail> getStudentList() {
+    List<Student> students = service.searchStudentList();
+    List<Course> studentCourses = service.searchStudentCourse();
+    return converter.convertStudentDetails(students, studentCourses);
   }
 
   @PostMapping("/updateStudent")
-  public String updateStudent(@ModelAttribute StudentDetail updateStudentEntity, BindingResult result) {
-    if (result.hasErrors()) {
-      return "updateStudent";
-    }
-    service.updateStudentDetails(updateStudentEntity);
-    return "redirect:/studentList";
-  }
-  //here we go again lads. What even is RedirectAttributes?
-  @ExceptionHandler(StudentNotFoundException.class)
-  public String handleNotFoundException(StudentNotFoundException ex, RedirectAttributes redirectAttributes) {
-    redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-    return "redirect:/studentList";
+  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
+    service.updateStudentDetails(studentDetail);
+    return ResponseEntity.ok("更新処理が成功しました。");
   }
 
 }
