@@ -32,14 +32,6 @@ public class MainController {
     this.service = service;
     this.converter = converter;
   }
-//new rest thing
-  @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList() {
-    List<Student> students = service.searchStudentList();
-    List<Course> studentCourses = service.searchStudentCourse();
-
-    return converter.convertStudentDetails(students, studentCourses);
-  }
 
   @GetMapping("/courseList")
   public String getStudentCourse(Model model) {
@@ -75,6 +67,14 @@ public class MainController {
   @GetMapping("/homePage")
   public String goHomePage(Model model) {
     return "homePage";
+  }
+
+//  NEW CODE - LESSON 33
+  @GetMapping("/studentList")
+  public List<StudentDetail> getStudentList() {
+    List<Student> students = service.searchStudentList();
+    List<Course> studentCourses = service.searchStudentCourse();
+    return converter.convertStudentDetails(students, studentCourses);
   }
 
   @PostMapping("/updateStudent")
