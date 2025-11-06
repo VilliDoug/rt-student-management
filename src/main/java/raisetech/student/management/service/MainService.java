@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.controller.converter.Converter;
 import raisetech.student.management.data.Student;
@@ -14,8 +15,8 @@ import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.domain.StudentNotFoundException;
 import raisetech.student.management.repository.Repository;
 
-@org.springframework.stereotype.Service
-public class Service {
+@Service
+public class MainService {
 
   private Repository repository;
 
@@ -23,7 +24,7 @@ public class Service {
   private Converter converter;
 
   @Autowired
-  public Service(Repository repository) {
+  public MainService(Repository repository) {
     this.repository = repository;
   }
 

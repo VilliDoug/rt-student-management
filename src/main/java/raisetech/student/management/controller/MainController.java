@@ -2,6 +2,7 @@ package raisetech.student.management.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,16 +16,16 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.domain.StudentNotFoundException;
-import raisetech.student.management.service.Service;
+import raisetech.student.management.service.MainService;
 
-@org.springframework.stereotype.Controller
-public class Controller {
+@Controller
+public class MainController {
 
-  private Service service;
+  private MainService service;
   private Converter converter;
 
   @Autowired
-  public Controller(Service service, Converter converter) {
+  public MainController(MainService service, Converter converter) {
     this.service = service;
     this.converter = converter;
   }
