@@ -1,10 +1,7 @@
 package raisetech.student.management.service;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +9,12 @@ import raisetech.student.management.controller.converter.MainConverter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.domain.StudentNotFoundException;
 import raisetech.student.management.repository.Repository;
 
+/**
+ * 受講生情報を取り扱うServiceです。
+ * 受講生の検索や登録、更新処理を行います。
+ */
 @Service
 public class MainService {
 
@@ -24,63 +24,49 @@ public class MainService {
   private MainConverter converter;
 
   @Autowired
-  public MainService(Repository repository) {
+  public MainService(Repository repository, MainConverter converter) {
     this.repository = repository;
+    this.converter = converter;
   }
 
-  public List<Student> searchStudentList() {
-    return repository.searchStudent();
-  }
+  /**
+   * 受講生の一覧検索を行います。
+   * 全件検索を行うので、条件指定は行わないません。
+   *
+   * @return　受講生一覧（全件）
+   */
+  public List<StudentDetail> searchStudentList() {
+    List<Student> studentList = repository.searchStudent();
+    List<Course> courseList = repository.searchCourseList();
+    return converter.convertStudentDetails(studentList, courseList);  }
 
-  public List<Student> filterStudentList() {
-    List<Student> filteredStudentList = repository.searchStudent().stream()
-        .filter(n -> n.getAge() >= 25)
-        .collect(Collectors.toList());
-    return filteredStudentList;
+  /**
+   * 受講生検索です。
+   * IDに紐づく受講生情報を取得したあと、その受講生に紐づく受講生コース情報を取得して設定します。
+   *
+   * @param id　受講生ID
+   * @return　受講生
+   */
+  public StudentDetail searchStudentId(String id) {
+    Student student = repository.fetchById(id);
+    List<Course> courseList = repository.searchCourseById(student.getId());
+    return new StudentDetail(student, courseList);
   }
 
   @Transactional
-  public void newRegisterStudentEntity(StudentDetail newStudentDetail) {
-    repository.registerStudentEntity(newStudentDetail.getStudent());
-    for (Course newCourseEnrollment : newStudentDetail.getStudentCourses()) {
-      newCourseEnrollment.setStudentId(newStudentDetail.getStudent().getId());
-      newCourseEnrollment.setCourseStartAt(String.valueOf(LocalDate.now()));
-      repository.registerCourseEnrollment(newCourseEnrollment);
+  public StudentDetail registerStudent(StudentDetail studentDetail) {
+    repository.registerStudentEntity(studentDetail.getStudent());
+    for (Course course : studentDetail.getStudentCourses()) {
+      course.setStudentId(studentDetail.getStudent().getId());
+      course.setCourseStartAt(String.valueOf(LocalDate.now()));
+      repository.registerCourseEnrollment(course);
     }
-  }
-
-  public List<Course> filterCourseList() {
-    List<Course> filteredCourseList = repository.searchCourse().stream()
-      .filter(n -> Objects.equals("Java Course", n.getCourseName()))
-      .collect(Collectors.toList());
-    return filteredCourseList;
-  }
-
-  public List<Course> searchStudentCourse() {
-    return repository.searchCourse();
-  }
-
-//  New service to fetch only ONE student entity
-  public StudentDetail searchByStudentId(String id) {
-    //Necessary object to check for NPE
-    Student singleStudent = repository.fetchById(id);
-    if (singleStudent == null) {
-      throw new StudentNotFoundException("ID" + id + "の受講生を見つかりませんでした。");
-    }
-    //New line to check for NPE in the list as well
-    List<Course> allCourses = java.util.Objects.requireNonNullElse
-        (repository.searchCourse(),Collections.emptyList());
-    List<Course> studentFilterCourses = allCourses.stream()
-        .filter(courseEnrollment ->
-            Objects.equals(singleStudent.getId(), courseEnrollment.getStudentId()))
-        .collect(Collectors.toList());
-    return converter.convertSingleStudentDetail(singleStudent, studentFilterCourses);
+    return studentDetail;
   }
 
   @Transactional
   public void updateStudentDetails (StudentDetail studentDetail) {
     repository.updateStudentEntity(studentDetail.getStudent());
   }
-
 
 }

@@ -3,78 +3,54 @@ package raisetech.student.management.controller;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import raisetech.student.management.controller.converter.MainConverter;
-import raisetech.student.management.data.Student;
-import raisetech.student.management.data.Course;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.domain.StudentNotFoundException;
 import raisetech.student.management.service.MainService;
 
+/**
+ *  受講生の検索や登録、更新などを行うREST APIとして受け付けるControllerです。
+ */
 @RestController
 public class MainController {
 
   private MainService service;
-  private MainConverter converter;
 
   @Autowired
-  public MainController(MainService service, MainConverter converter) {
+  public MainController(MainService service) {
     this.service = service;
-    this.converter = converter;
-  }
-
-  @GetMapping("/courseList")
-  public String getStudentCourse(Model model) {
-    model.addAttribute("courseList", service.searchStudentCourse());
-    return "courseList";
-  }
-
-  @GetMapping("/filterStudentList")
-  public List<Student> getFilteredStudents() {
-    return service.filterStudentList();
-  }
-
-  @GetMapping("/filterCourseList")
-  public List<Course> getFilteredCourses() {
-    return service.filterCourseList();
-  }
-
-  @GetMapping("/registerStudentStart")
-  public String registerStudentStart(Model model) {
-    model.addAttribute("newStudent", new StudentDetail());
-    return "registerStudent";
   }
 
   @PostMapping("/registerStudent")
-  public String registerStudent(@ModelAttribute StudentDetail newStudent, BindingResult result) {
-    if (result.hasErrors()) {
-      return "registerStudent";
-    }
-    service.newRegisterStudentEntity(newStudent);
-    return "redirect:/studentList";
+  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail newStudent) {
+    StudentDetail responseDetail = service.registerStudent(newStudent);
+    return ResponseEntity.ok(responseDetail);
   }
 
-  @GetMapping("/homePage")
-  public String goHomePage(Model model) {
-    return "homePage";
-  }
-
-//  NEW CODE - LESSON 33
+  /**
+   * 受講生一覧検索です。
+   * 全件検索を行うので、条件指定は行わないません。
+   *
+   * @return　受講生一覧（全件）
+   */
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
-    List<Student> students = service.searchStudentList();
-    List<Course> studentCourses = service.searchStudentCourse();
-    return converter.convertStudentDetails(students, studentCourses);
+    return service.searchStudentList();
+  }
+
+  /**
+   *　受講生検索です。
+   *　IDに紐づく任意の受講生の情報を取得します。
+   *
+   * @param id　受講生ID
+   * @return　受講生
+   */
+  @GetMapping("/student/{id}")
+  public StudentDetail getStudent(@PathVariable String id) {
+    return service.searchStudentId(id);
   }
 
   @PostMapping("/updateStudent")
