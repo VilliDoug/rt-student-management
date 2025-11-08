@@ -6,8 +6,55 @@
   <select id="searchAllStudents" resultType="raisetech.student.management.data.Student">
     SELECT * FROM students
   </select>
-
+<!-- select student by ID-->
   <select id="fetchById" resultType="raisetech.student.management.data.Student">
     SELECT * FROM students WHERE id = #{id}
   </select>
+<!--  select student by deleted flag=false -->
+  <select id="searchDeletedStudent" resultType="raisetech.student.management.data.Student">
+    SELECT * FROM students WHERE was_deleted = false
+  </select>
+<!--  select all student courses-->
+  <select id="searchAllCourses" resultType="raisetech.student.management.data.Course">
+    SELECT * FROM student_courses
+  </select>
+<!--  select course by studentId -->
+  <select id="fetchCourseById" resultType="raisetech.student.management.data.Course">
+    SELECT * FROM student_courses WHERE student_id = #{studentId}
+  </select>
+<!--  register new student -->
+  <insert id="registerStudent" parameterType="raisetech.student.management.data.Student"
+    useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO students (name, kana_name, nickname, email_address, residence, age, gender, remark, was_deleted)
+    VALUES (#{name}, #{kanaName}, #{nickname}, #{emailAddress}, #{residence}, #{age}, #{gender}, #{remark}, false)
+  </insert>
+<!--  register new course - studentId, courseName, courseStartAt, courseEndAt-->
+  <insert id="registerCourse" parameterType="raisetech.student.management.data.Course"
+    useGeneratedKeys ="true" keyProperty = "id">
+    INSERT INTO student_courses (student_id, course_name, course_start_at, course_end_at)
+    VALUES (#{studentId}, #{courseName}, #{courseStartAt}, #{courseEndAt})
+  </insert>
+<!--  update single student by id-->
+  <update id="updateStudent" parameterType="raisetech.student.management.data.Student">
+    UPDATE students
+    SET
+      name = #{name},
+      kana_name = #{kanaName},
+      nickname = #{nickname},
+      email_address = #{emailAddress},
+      residence = #{residence},
+      age = #{age},
+      gender = #{gender},
+      remark = #{remark},
+      was_deleted = #{wasDeleted}
+    WHERE id = #{id}
+  </update>
+<!-- update course name by id-->
+  <update id="updateCourseName" parameterType="raisetech.student.management.data.Course">
+    UPDATE student_courses
+    SET
+      course_name = #{courseName}
+    WHERE id = #{id}
+  </update>
+
 </mapper>
