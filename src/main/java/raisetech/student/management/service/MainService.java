@@ -65,7 +65,6 @@ public class MainService {
     Student student = studentDetail.getStudent();
 
     repository.registerStudent(student);
-//    add npe here
     studentDetail.getCourseList().forEach(course -> {
       initStudentCourse(course, student);
       repository.registerCourse(course);
