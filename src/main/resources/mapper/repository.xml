@@ -11,7 +11,7 @@
     SELECT * FROM students WHERE id = #{id}
   </select>
 <!--  select student by deleted flag=false -->
-  <select id="searchDeletedStudent" resultType="raisetech.student.management.data.Student">
+  <select id="searchNotDeletedStudent" resultType="raisetech.student.management.data.Student">
     SELECT * FROM students WHERE was_deleted = false
   </select>
 <!--  select all student courses-->
