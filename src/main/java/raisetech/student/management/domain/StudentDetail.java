@@ -18,6 +18,7 @@ public class StudentDetail {
 
   @Valid
   private Student student;
+
   @Valid
   private List<Course> courseList = new ArrayList<>();
 
