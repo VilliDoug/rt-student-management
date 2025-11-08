@@ -2,8 +2,6 @@ package raisetech.student.management.repository;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
 
@@ -33,7 +31,7 @@ public interface Repository {
    *
    * @return　受講生（削除無し）
    */
-  List<Student> searchDeletedStudent();
+  List<Student> searchNotDeletedStudent();
 
   /**
    * 受講生のコース情報の全件検索を行います。
@@ -42,7 +40,7 @@ public interface Repository {
    */
   List<Course> searchAllCourses();
 
-  List<Course> fetchCourseById(String id);
+  List<Course> fetchCourseById(String studentId);
 
   /**
    * 受講生を新規登録します。IDに関しては自動採番を行う。
