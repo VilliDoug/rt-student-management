@@ -36,7 +36,7 @@ public class MainService {
    * @return　受講生詳細一覧（全件）
    */
   public List<StudentDetail> searchStudentList() {
-    List<Student> studentList = repository.searchStudent();
+    List<Student> studentList = repository.searchNotDeletedStudent();
     List<Course> courseList = repository.searchAllCourses();
     return converter.convertDetails(studentList, courseList);  }
 
@@ -92,7 +92,7 @@ public class MainService {
   public void updateStudent(StudentDetail studentDetail) {
     repository.updateStudent(studentDetail.getStudent());
     studentDetail.getCourseList()
-        .forEach(course -> repository.updateCourse(course));
+        .forEach(course -> repository.updateCourseName(course));
   }
 
 }
