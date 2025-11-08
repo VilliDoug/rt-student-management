@@ -20,8 +20,7 @@ public interface Repository {
    *
    * @return　受講生一覧（全件）
    */
-  @Select("SELECT * FROM students")
-  List<Student> searchStudents();
+  List<Student> searchAllStudents();
 
   /**
    * 受講生IDに紐づく受講生検索を行います。
@@ -29,7 +28,6 @@ public interface Repository {
    * @param id　受講生ID
    * @return　受講生
    */
-  @Select("SELECT * FROM students WHERE id = #{id}")
   Student fetchById(String id);
 
   /**
@@ -46,28 +44,48 @@ public interface Repository {
    * @return　受講生コース情報一覧（全件）
    */
   @Select("SELECT * FROM student_courses")
-  List<Course> searchCourseList();
+  List<Course> searchAllCourses();
 
   @Select("SELECT * FROM student_courses WHERE student_id = #{studentId}")
-  List<Course> searchCourseById(String id);
+  List<Course> fetchCourseById(String id);
 
+  /**
+   * 受講生を新規登録します。IDに関しては自動採番を行う。
+   *
+   * @param student　受講生
+   */
   @Insert("INSERT INTO students (name, kana_name, nickname, email_address, residence, age, gender, remark, was_deleted)"
       + " VALUES (#{name}, #{kanaName}, #{nickname}, #{emailAddress}, #{residence}, #{age}, #{gender}, #{remark}, false)")
   @Options(useGeneratedKeys = true, keyProperty = "id")
-  void registerStudentEntity(Student student);
+  void registerStudent(Student student);
 
+  /**
+   * 受講生コース情報を新規登録します。IDに関しては自動採番を行う。
+   *
+   * @param student　受講生コース情報
+   */
   @Insert("INSERT INTO student_courses (student_id, course_name, course_start_at, course_end_at) "
       + "VALUES (#{studentId}, #{courseName}, #{courseStartAt}, #{courseEndAt})")
   @Options(useGeneratedKeys = true, keyProperty = "id")
-  void registerCourseEnrollment (Course course);
+  void registerCourse(Course course);
 
+  /**
+   * 受講生を更新します。
+   *
+   * @param student　受講生
+   */
   @Update("UPDATE students SET name = #{name}, kana_name = #{kanaName}, nickname = #{nickname}, email_address = #{emailAddress}, "
       + "residence = #{residence}, age = #{age}, gender = #{gender}, remark = #{remark}, was_deleted = #{wasDeleted}"
       + " WHERE id = #{id}")
-  void updateStudentEntity(Student student);
+  void updateStudent(Student student);
 
+  /**
+   * 受講生コース情報のコース名を更新します。
+   *
+   * @param course　受講生コース情報
+   */
   @Update("UPDATE student_courses SET course_name = #{courseName}  WHERE id = #{id}")
-  void updateCourseEnrollment (Course course);
+  void updateCourse(Course course);
 
 
 

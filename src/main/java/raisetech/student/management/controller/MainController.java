@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.domain.StudentDetail;
@@ -24,17 +25,11 @@ public class MainController {
     this.service = service;
   }
 
-  @PostMapping("/registerStudent")
-  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail newStudent) {
-    StudentDetail responseDetail = service.registerStudent(newStudent);
-    return ResponseEntity.ok(responseDetail);
-  }
-
   /**
-   * 受講生一覧検索です。
+   * 受講生詳細の一覧検索です。
    * 全件検索を行うので、条件指定は行わないません。
    *
-   * @return　受講生一覧（全件）
+   * @return　受講生詳細一覧（全件）
    */
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
@@ -42,20 +37,39 @@ public class MainController {
   }
 
   /**
-   *　受講生検索です。
+   *　受講生詳細検索です。
    *　IDに紐づく任意の受講生の情報を取得します。
    *
    * @param id　受講生ID
-   * @return　受講生
+   * @return　受講生詳細
    */
   @GetMapping("/student/{id}")
   public StudentDetail getStudent(@PathVariable String id) {
     return service.searchStudentId(id);
   }
 
-  @PostMapping("/updateStudent")
+  /**
+   * 受講生の登録を行います。
+   *
+   * @param studentDetail　受講生詳細
+   * @return　実行結果
+   */
+  @PostMapping("/registerStudent")
+  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
+    StudentDetail responseDetail = service.registerStudent(studentDetail);
+    return ResponseEntity.ok(responseDetail);
+  }
+
+  /**
+   * 受講生詳細の更新を行います。
+   * キャンセルフラッグの更新もここで行います。（論理削除）
+   *
+   * @param studentDetail　受講生詳細
+   * @return　実行結果
+   */
+  @PutMapping("/updateStudent")
   public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
-    service.updateStudentDetails(studentDetail);
+    service.updateStudent(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。");
   }
 

@@ -20,34 +20,34 @@ public class MainConverter {
    * 受講生に紐づく受講生コース情報をマッピングする。
    * 受講生コース情報は受講生に対して複数存在するのでループを回して受講生詳細情報を組み立てる。
    *
-   * @param studentEntities　受講生一覧
-   * @param enrollments　受講生コース情報のリスト
+   * @param studentList　受講生一覧
+   * @param courseList　受講生コース情報のリスト
    * @return　受講生詳細情報のリスト
    */
-  public List<StudentDetail> convertStudentDetails(
-      List<Student> studentEntities,
-      List<Course> enrollments) {
-    if (studentEntities == null || studentEntities.isEmpty()) {
+  public List<StudentDetail> convertDetails(
+      List<Student> studentList,
+      List<Course> courseList) {
+    if (studentList == null || studentList.isEmpty()) {
       return Collections.emptyList();
     }
-    List<Course> safeEnrollments = enrollments != null ? enrollments : Collections.emptyList();
+    List<Course> safeCourseList = courseList != null ? courseList : Collections.emptyList();
     List<StudentDetail> details = new ArrayList<>();
 
-    studentEntities.forEach(student -> {
+    studentList.forEach(student -> {
       StudentDetail studentDetail = new StudentDetail();
       studentDetail.setStudent(student);
 
-      List<Course> matchingEnrollments = safeEnrollments.stream()
+      List<Course> matchCourseList = safeCourseList.stream()
           .filter (enrollment -> Objects.equals(student.getId(), enrollment.getStudentId()))
           .collect(Collectors.toList());
 
-      studentDetail.setStudentCourses(matchingEnrollments);
+      studentDetail.setCourseList(matchCourseList);
       details.add(studentDetail);
     });
     return details;
   }
 
-  public StudentDetail convertSingleStudentDetail
+  public StudentDetail convertSingleDetail
       (Student student, List<Course> studentCourses)  {
     StudentDetail singleStudentDetail = new StudentDetail();
     if (student == null) {
@@ -55,7 +55,7 @@ public class MainConverter {
     }
     singleStudentDetail.setStudent(student);
 //    this is a less cluttered, more modern way to do what was done in NPE checker #2 above. Nice
-    singleStudentDetail.setStudentCourses(java.util.Objects.requireNonNullElse(studentCourses, Collections.emptyList()));
+    singleStudentDetail.setCourseList(java.util.Objects.requireNonNullElse(studentCourses, Collections.emptyList()));
     return singleStudentDetail;
   }
 
