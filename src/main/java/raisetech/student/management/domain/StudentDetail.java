@@ -22,7 +22,7 @@ public class StudentDetail {
   @Valid
   private Student student;
 
-  @Schema(implementation = Course.class)
+  @Schema(type = "array", implementation = Course.class)
   @Valid
   private List<Course> courseList = new ArrayList<>();
 
