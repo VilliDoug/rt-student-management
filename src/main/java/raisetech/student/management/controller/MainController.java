@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.controller.handler.ExHandler;
-import raisetech.student.management.controller.handler.reponses.ValidationErrorResponse;
+import raisetech.student.management.controller.handler.response.ApiErrorResponse;
+import raisetech.student.management.controller.handler.response.ValidationErrorResponse;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.MainService;
 
@@ -47,10 +48,10 @@ public class MainController {
   @ApiResponses(value = {
       // 200 OK Response (Found)
       @ApiResponse(responseCode = "200", description = "一覧検索成功",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudentDetail.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudentDetail[].class))),
       // 500 Interval Server Error
       @ApiResponse(responseCode = "500", description = "サーバーエラー (Internal Server Error)",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExHandler.class)))
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
   })
   @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
   @GetMapping("/studentList")
@@ -74,10 +75,10 @@ public class MainController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorResponse.class))),
       // 404 Not Found
       @ApiResponse(responseCode = "404", description = "受講生が見つかりませんでした。",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExHandler.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
       // 500 Interval Server Error
       @ApiResponse(responseCode = "500", description = "サーバーエラー (Internal Server Error)",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExHandler.class)))
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
   })
   @Operation(summary = "受講生ID検索", description = "IDに紐づく受講生詳細を検索します。")
   @GetMapping("/student/{id}")
@@ -104,7 +105,7 @@ public class MainController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorResponse.class))),
       // 500 Interval Server Error
       @ApiResponse(responseCode = "500", description = "サーバーエラー (Internal Server Error)",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExHandler.class)))
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
   })
   @Operation(summary = "受講生登録", description = "受講生を登録します。")
   @PostMapping("/registerStudent")
@@ -129,7 +130,7 @@ public class MainController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorResponse.class))),
       // 500 Interval Server Error
       @ApiResponse(responseCode = "500", description = "サーバーエラー (Internal Server Error)",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExHandler.class)))
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
   })
   @Operation(summary = "受講生詳細情報更新", description = "受講生詳細情報を更新します。")
   @PutMapping("/updateStudent")

@@ -1,4 +1,4 @@
-package raisetech.student.management.controller.handler.reponses;
+package raisetech.student.management.controller.handler.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Map;
