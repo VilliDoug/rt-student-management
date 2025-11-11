@@ -36,25 +36,22 @@ class MainServiceTest {
 
   @Test
   void 受講生詳細の一覧検索_リポジトリとコンバーターの処理が適切に呼び出されていること() {
-// 事前準備
     List<Student> studentList = new ArrayList<>();
     List<Course> courseList = new ArrayList<>();
     List<StudentDetail> expectedDetails = new ArrayList<>();
+
     when(repository.searchAllStudents()).thenReturn(studentList);
     when(repository.searchAllCourses()).thenReturn(courseList);
     when(converter.convertDetails(studentList, courseList)).thenReturn(expectedDetails);
-//    実行
+
     List<StudentDetail> actual = sut.searchStudentList();
-//    検証
+
     verify(repository, times(1)).searchAllStudents();
     verify(repository, times(1)).searchAllCourses();
     verify(converter, times(1)).convertDetails(studentList, courseList);
 
-//    後処理
-    assertEquals(studentList, actual);
-//    ここでDBをもとに戻す。
+    assertEquals(expectedDetails, actual);
 
-// 課題・Service処理のテストを書いて動作
   }
 
 
@@ -93,7 +90,7 @@ class MainServiceTest {
     verify(repository, times(1)).registerCourse(course);
 
     assertEquals(student, actual.getStudent());
-    assertEquals(student.getId(), actual.getCourseList().getFirst().getStudentId());
+    assertEquals(student.getId(), actual.getCourseList().get(0).getStudentId());
     assertEquals(expectedRegisterDetail, actual);
 
   }
