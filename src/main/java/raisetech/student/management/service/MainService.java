@@ -38,9 +38,10 @@ public class MainService {
    * @return　受講生詳細一覧（全件）
    */
   public List<StudentDetail> searchStudentList() {
-    List<Student> studentList = repository.searchNotDeletedStudent();
+    List<Student> studentList = repository.searchAllStudents();
     List<Course> courseList = repository.searchAllCourses();
     return converter.convertDetails(studentList, courseList);  }
+//  TEST DONE
 
   /**
    * 受講生詳細検索です。
