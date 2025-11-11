@@ -33,7 +33,7 @@ public class MainService {
 
   /**
    * 受講生詳細の一覧検索を行います。
-   * 全件検索を行うので、条件指定は行わないません。
+   * 全件検索を行うので、条件指定は行いません。
    *
    * @return　受講生詳細一覧（全件）
    */
@@ -41,7 +41,6 @@ public class MainService {
     List<Student> studentList = repository.searchAllStudents();
     List<Course> courseList = repository.searchAllCourses();
     return converter.convertDetails(studentList, courseList);  }
-//  TEST DONE
 
   /**
    * 受講生詳細検索です。
