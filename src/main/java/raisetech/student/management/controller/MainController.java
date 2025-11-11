@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import raisetech.student.management.controller.handler.ExHandler;
 import raisetech.student.management.controller.handler.response.ApiErrorResponse;
 import raisetech.student.management.controller.handler.response.ValidationErrorResponse;
 import raisetech.student.management.domain.StudentDetail;

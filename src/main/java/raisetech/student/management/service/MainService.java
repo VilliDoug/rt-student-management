@@ -29,6 +29,8 @@ public class MainService {
     this.converter = converter;
   }
 
+
+
   /**
    * 受講生詳細の一覧検索を行います。
    * 全件検索を行うので、条件指定は行わないません。
