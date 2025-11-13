@@ -80,7 +80,7 @@ public class MainService {
    * @param course　受講生コース情報
    * @param student　受講生
    */
-  public void initStudentCourse(Course course, Student student) {
+  void initStudentCourse(Course course, Student student) {
     course.setStudentId(student.getId());
     course.setCourseStartAt(String.valueOf(LocalDate.now()));
   }

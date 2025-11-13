@@ -136,7 +136,6 @@ class MainControllerTest {
         .andExpect(status().isInternalServerError());
 
     verify(service, times(1)).searchStudentId(id);
-    assertThatExceptionOfType(Exception.class);
 
   }
 
