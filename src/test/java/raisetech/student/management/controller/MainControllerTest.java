@@ -1,7 +1,6 @@
 package raisetech.student.management.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -157,7 +156,6 @@ class MainControllerTest {
 
 
     StudentDetail expectedDetail = new StudentDetail(student, courseList);
-    StudentDetail actual = new StudentDetail(student, courseList);
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
