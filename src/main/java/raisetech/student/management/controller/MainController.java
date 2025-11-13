@@ -81,13 +81,18 @@ public class MainController {
   })
   @Operation(summary = "受講生ID検索", description = "IDに紐づく受講生詳細を検索します。")
   @GetMapping("/student/{id}")
-  public StudentDetail getStudent(
+  public ResponseEntity<StudentDetail> getStudent(
       @PathVariable
       @Pattern(regexp = "^\\d+$")
       @Parameter(name = "id", in = ParameterIn.PATH, description = "取得する受講生のID", example = "101")
       String id) {
-    return service.searchStudentId(id);
-  }
+    StudentDetail studentDetail = service.searchStudentId(id);
+    if (studentDetail == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(studentDetail);
+  } // fixing this to make sure we have a null 404 return! tomorrow
+
 
   /**
    * 受講生の登録を行います。

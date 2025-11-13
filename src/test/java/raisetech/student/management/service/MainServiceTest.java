@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,6 +110,18 @@ class MainServiceTest {
 
     verify(repository, times(1)).updateStudent(student);
     verify(repository, times(1)).updateCourseName(course);
+  }
+
+  @Test
+  void 受講生詳細の登録_初期化処理が行われること() {
+    Student student = new Student();
+    student.setId("888");
+    Course course = new Course();
+
+    sut.initStudentCourse(course, student);
+
+    assertEquals(student.getId(), course.getStudentId());
+    assertEquals(String.valueOf(LocalDate.now()), course.getCourseStartAt());
   }
 
 }
