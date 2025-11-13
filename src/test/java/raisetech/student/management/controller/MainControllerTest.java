@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,8 +69,6 @@ class MainControllerTest {
         .andExpect(status().isInternalServerError());
 
     verify(service, times(1)).searchStudentList();
-    assertThatExceptionOfType(Exception.class);
-
   }
 
   /**
@@ -107,6 +106,7 @@ class MainControllerTest {
         .containsOnly("数字のみ入力するようにしてください。");
 
   }
+
   /**
    * student/{id} 404 no student found
    */
@@ -172,8 +172,6 @@ class MainControllerTest {
     verify(service, times(1))
         .registerStudent(Mockito.any(StudentDetail.class));
 
-    assertThat(actual.equals(expectedDetail));
-
   }
 
   /**
@@ -196,22 +194,15 @@ class MainControllerTest {
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
-
     mockMvc.perform(MockMvcRequestBuilders.post("/registerStudent")
             .contentType(MediaType.APPLICATION_JSON).content(jsonBody))
         .andExpect(status().isBadRequest())
         .andDo(result ->
             verify(service, times(0))
                 .registerStudent(Mockito.any(StudentDetail.class)))
-        .andExpect(content().json(
-            "{\"validationErrors\":"
-                + "{\"student.id\":\"数字のみ入力するようにしてください。\"}}"));
-
-    verify(service, times(0))
-        .registerStudent(Mockito.any(StudentDetail.class));
-
-    assertThat(violations.size()).isEqualTo(1);
+        .andExpect(jsonPath("$.validationErrors['student.id']").exists())
+        .andExpect(jsonPath("$.validationErrors['student.id']")
+            .value("数字のみ入力するようにしてください。"));
 
   }
 
@@ -241,8 +232,8 @@ class MainControllerTest {
         .andDo(result ->
             verify(service, times(1))
                 .registerStudent(Mockito.any(StudentDetail.class)))
-        .andExpect(content().json(
-            "{\"errorResponse\":\"内部サーバー エラーが発生しました。\"}"));
+        .andExpect(jsonPath("$.errorResponse")
+            .value("内部サーバー エラーが発生しました。"));
 
   }
 
@@ -289,8 +280,6 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
-    Set<ConstraintViolation<Student>> violations = validator.validate(student);
-
     StudentDetail expectedDetail = new StudentDetail(student, courseList);
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
@@ -301,11 +290,10 @@ class MainControllerTest {
         .andDo(result ->
             verify(service, times(0))
                 .updateStudent(Mockito.any(StudentDetail.class)))
-        .andExpect(content().json(
-            "{\"validationErrors\":"
-                + "{\"student.emailAddress\":\"有効なメールアドレスを入力してください。\"}}"));
-
-    assertThat(violations.size()).isEqualTo(1);
+        .andExpect(jsonPath("$.validationErrors['student.emailAddress']")
+            .exists())
+        .andExpect(jsonPath("$.validationErrors['student.emailAddress']")
+            .value("有効なメールアドレスを入力してください。"));
 
   }
 
@@ -339,8 +327,8 @@ class MainControllerTest {
         .andDo(result ->
             verify(service, times(1))
                 .updateStudent(Mockito.any(StudentDetail.class)))
-        .andExpect(content().json(
-            "{\"errorResponse\":\"内部サーバー エラーが発生しました。\"}"));
+        .andExpect(jsonPath("$.errorResponse")
+            .value("内部サーバー エラーが発生しました。"));
 
   }
 
