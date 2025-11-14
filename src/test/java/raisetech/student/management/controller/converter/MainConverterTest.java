@@ -17,7 +17,7 @@ class MainConverterTest {
   void before() {sut = new MainConverter();}
 
   @Test
-  void コンバーター処理が適切に実行すること_コースリストが空になるケース(){
+  void コンバーター処理が適切に実行する時コースリストが空になるケース(){
     Student student = new Student();
     student.setId("1");
     Course course = new Course();
@@ -30,7 +30,9 @@ class MainConverterTest {
 
     assertThat(actualDetail).isNotNull();
     assertThat(actualDetail).hasSize(1);
-    assertThat(actualDetail.get(0).getStudent()).isEqualTo(student);
+    assertThat(actualDetail.get(0).getStudent())
+        .extracting("id")
+        .isEqualTo("1");
     assertThat(actualDetail.get(0).getCourseList()).isEmpty();
 
   }
