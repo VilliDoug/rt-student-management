@@ -14,7 +14,7 @@ import lombok.Setter;
 public class ApiErrorResponse {
 
     @Schema(description = "エラーメッセージ")
-    private String message;
+    private String errorResponse;
 }
 
 
