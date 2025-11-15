@@ -16,7 +16,6 @@ class RepositoryTest {
 
   @Autowired
   private Repository sut;
-  private Object students;
 
   @Test
   void 受講生の全件検索が行えること() {
