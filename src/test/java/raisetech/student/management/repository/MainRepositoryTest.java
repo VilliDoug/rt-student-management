@@ -8,12 +8,17 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.data.Student;
 
 @MybatisTest
 @Transactional
+@Rollback(true)
+@AutoConfigureTestDatabase(replace = Replace.ANY)
 class MainRepositoryTest {
 
   @Autowired
@@ -124,15 +129,14 @@ class MainRepositoryTest {
             "山田太郎",
             "taro@example.com");
 
+    String nameToUpdate = "Test Name";
+    actual.setName(nameToUpdate);
+    String emailAddressToUpdate = "test@example.com";
+    actual.setEmailAddress(emailAddressToUpdate);
+
+    sut.updateStudent(actual);
 
     Student expected = sut.fetchById("1");
-    String expectedName = "Test Name";
-    actual.setName(expectedName);
-    String expectedEmailAddress = "test@example.com";
-    actual.setEmailAddress(expectedEmailAddress);
-
-    sut.updateStudent(expected);
-
     assertThat(expected).extracting(
             Student::getName,
             Student::getEmailAddress)
