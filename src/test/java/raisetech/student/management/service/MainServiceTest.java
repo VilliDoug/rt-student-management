@@ -17,14 +17,14 @@ import raisetech.student.management.controller.converter.MainConverter;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.repository.Repository;
+import raisetech.student.management.repository.MainRepository;
 
 
 @ExtendWith(MockitoExtension.class)
 class MainServiceTest {
 
   @Mock
-  private Repository repository;
+  private MainRepository repository;
 
   @Mock
   private MainConverter converter;

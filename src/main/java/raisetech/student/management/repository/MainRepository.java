@@ -9,7 +9,7 @@ import raisetech.student.management.data.Course;
  * 受講生テーブルと受講生コース情報テーブルと紐づくRepositoryです。
  */
 @Mapper
-public interface Repository {
+public interface MainRepository {
 
   /**
    * 受講生の全件検索を行います。

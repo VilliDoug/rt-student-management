@@ -9,7 +9,7 @@ import raisetech.student.management.controller.converter.MainConverter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.repository.Repository;
+import raisetech.student.management.repository.MainRepository;
 
 /**
  * 受講生情報を取り扱うServiceです。
@@ -18,13 +18,13 @@ import raisetech.student.management.repository.Repository;
 @Service
 public class MainService {
 
-  private Repository repository;
+  private MainRepository repository;
 
   @Autowired
   private MainConverter converter;
 
   @Autowired
-  public MainService(Repository repository, MainConverter converter) {
+  public MainService(MainRepository repository, MainConverter converter) {
     this.repository = repository;
     this.converter = converter;
   }
