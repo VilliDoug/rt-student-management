@@ -20,4 +20,3 @@ CREATE TABLE IF NOT EXISTS student_courses
   course_start_at TIMESTAMP,
   course_end_at TIMESTAMP
 );
-
