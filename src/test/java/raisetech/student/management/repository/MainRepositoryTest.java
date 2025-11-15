@@ -12,10 +12,10 @@ import raisetech.student.management.data.Course;
 import raisetech.student.management.data.Student;
 
 @MybatisTest
-class RepositoryTest {
+class MainRepositoryTest {
 
   @Autowired
-  private Repository sut;
+  private MainRepository sut;
 
   @Test
   void 受講生の全件検索が行えること() {
@@ -116,26 +116,21 @@ class RepositoryTest {
     Student actual = sut.fetchById("1");
     assertThat(actual).isNotNull();
     assertThat(actual).extracting(
-            Student::getId,
             Student::getName,
             Student::getEmailAddress)
         .containsExactly(
-            "1",
             "山田太郎",
             "taro@example.com");
 
-    actual.setId("999");
     actual.setName("Test Name");
     actual.setEmailAddress("test@example.com");
 
     sut.updateStudent(actual);
 
     assertThat(actual).extracting(
-            Student::getId,
             Student::getName,
             Student::getEmailAddress)
         .containsExactly(
-            "999",
             "Test Name",
             "test@example.com");
 
@@ -143,29 +138,35 @@ class RepositoryTest {
 
   @Test
   void コース名の更新を適切に行うこと() {
-    List<Course> actual = sut.fetchCourseById("5");
-    Course courseToUpdate = actual.get(0);
-    assertThat(actual).isNotNull();
-    assertThat(actual).extracting(
+    List<Course> preUpdateCourse = sut.fetchCourseById("5");
+    Course courseToUpdate = preUpdateCourse.get(0);
+    assertThat(preUpdateCourse).isNotNull();
+    assertThat(courseToUpdate).extracting(
             Course::getId,
             Course::getStudentId,
             Course::getCourseName)
-        .containsExactly(tuple(
+        .containsExactly(
             "9",
             "5",
-            "AWSコース"));
+            "AWSコース");
 
     String expectedName = "Crash Test Course";
     courseToUpdate.setCourseName(expectedName);
 
-    assertThat(actual).extracting(
+    sut.updateCourseName(courseToUpdate);
+    sut.fetchCourseById("5");
+
+    List<Course> actualUpdateCourse = sut.fetchCourseById("5");
+    Course actualCourse = actualUpdateCourse.get(0);
+
+    assertThat(actualCourse).extracting(
         Course::getId,
         Course::getStudentId,
         Course::getCourseName)
-        .containsExactly(tuple(
+        .containsExactly(
             "9",
             "5",
-            "Crash Test Course"));
+            "Crash Test Course");
 
   }
 
