@@ -1,0 +1,175 @@
+package raisetech.student.management.repository;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+
+import java.time.LocalDate;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import raisetech.student.management.data.Course;
+import raisetech.student.management.data.Student;
+
+@MybatisTest
+class RepositoryTest {
+
+  @Autowired
+  private Repository sut;
+  private Object students;
+
+  @Test
+  void 受講生の全件検索が行えること() {
+    List<Student> actual = sut.searchAllStudents();
+    assertThat(actual.size()).isEqualTo(5);
+  }
+
+  @Test
+  void 受講生情報をのIDで取得処理が行えること() {
+    Student actual = sut.fetchById("1");
+    assertThat(actual).isNotNull();
+    assertThat(actual).extracting(
+            Student::getId,
+            Student::getName,
+            Student::getKanaName,
+            Student::getNickname,
+            Student::getEmailAddress,
+            Student::getResidence,
+            Student::getAge,
+            Student::getGender,
+            Student::getRemark,
+            Student::isWasDeleted)
+        .containsExactly(
+            "1",
+            "山田太郎",
+            "ヤマダタロウ",
+            "タロウ",
+            "taro@example.com",
+            "東京",
+            25,
+            "男性",
+            "最初の登録者",
+            false);
+  }
+
+  @Test
+  void コースリストの全件検索が行えること() {
+    List<Course> actual = sut.searchAllCourses();
+    assertThat(actual.size()).isEqualTo(10);
+  }
+
+  @Test
+  void コース情報をのIDで取得処理が行えること() {
+    List<Course> actual = sut.fetchCourseById("5");
+    assertThat(actual).isNotNull();
+    assertThat(actual).extracting(
+        Course::getId,
+        Course::getStudentId,
+        Course::getCourseName,
+        Course::getCourseStartAt,
+        Course::getCourseEndAt)
+        .containsExactly(tuple(
+        "9",
+        "5",
+        "AWSコース",
+        "2023-12-01 12:00:00",
+        "2024-04-01 18:00:00"));
+  }
+
+  @Test
+  void 受講生の登録が行えること() {
+    Student student = new Student();
+    student.setName("TestName");
+    student.setKanaName("テストネーム");
+    student.setNickname("テスト");
+    student.setEmailAddress("test@example.com");
+    student.setResidence("Area 51");
+    student.setAge(20);
+    student.setGender("その他");
+    student.setRemark("テスト");
+    student.setWasDeleted(false);
+
+    sut.registerStudent(student);
+
+    List<Student> actual = sut.searchAllStudents();
+
+    assertThat(actual.size()).isEqualTo(6);
+
+  }
+
+  @Test
+  void コースの新規登録が行えること() {
+    Course course = new Course();
+    course.setStudentId("1");
+    course.setCourseName("Test Course");
+    course.setCourseStartAt(String.valueOf(LocalDate.now()));
+    course.setCourseEndAt(String.valueOf(LocalDate.now().plusYears(1)));
+
+    sut.registerCourse(course);
+
+    List<Course> actual = sut.searchAllCourses();
+
+    assertThat(actual.size()).isEqualTo(11);
+  }
+
+  @Test
+  void 受講生情報の更新を適切に行うこと() {
+    Student actual = sut.fetchById("1");
+    assertThat(actual).isNotNull();
+    assertThat(actual).extracting(
+            Student::getId,
+            Student::getName,
+            Student::getEmailAddress)
+        .containsExactly(
+            "1",
+            "山田太郎",
+            "taro@example.com");
+
+    actual.setId("999");
+    actual.setName("Test Name");
+    actual.setEmailAddress("test@example.com");
+
+    sut.updateStudent(actual);
+
+    assertThat(actual).extracting(
+            Student::getId,
+            Student::getName,
+            Student::getEmailAddress)
+        .containsExactly(
+            "999",
+            "Test Name",
+            "test@example.com");
+
+  }
+
+  @Test
+  void コース名の更新を適切に行うこと() {
+    List<Course> actual = sut.fetchCourseById("5");
+    Course courseToUpdate = actual.get(0);
+    assertThat(actual).isNotNull();
+    assertThat(actual).extracting(
+            Course::getId,
+            Course::getStudentId,
+            Course::getCourseName)
+        .containsExactly(tuple(
+            "9",
+            "5",
+            "AWSコース"));
+
+    String expectedName = "Crash Test Course";
+    courseToUpdate.setCourseName(expectedName);
+
+    assertThat(actual).extracting(
+        Course::getId,
+        Course::getStudentId,
+        Course::getCourseName)
+        .containsExactly(tuple(
+            "9",
+            "5",
+            "Crash Test Course"));
+
+  }
+
+}
+
+
