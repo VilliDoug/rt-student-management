@@ -8,10 +8,12 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.data.Student;
 
 @MybatisTest
+@Transactional
 class MainRepositoryTest {
 
   @Autowired
@@ -122,12 +124,16 @@ class MainRepositoryTest {
             "山田太郎",
             "taro@example.com");
 
-    actual.setName("Test Name");
-    actual.setEmailAddress("test@example.com");
 
-    sut.updateStudent(actual);
+    Student expected = sut.fetchById("1");
+    String expectedName = "Test Name";
+    actual.setName(expectedName);
+    String expectedEmailAddress = "test@example.com";
+    actual.setEmailAddress(expectedEmailAddress);
 
-    assertThat(actual).extracting(
+    sut.updateStudent(expected);
+
+    assertThat(expected).extracting(
             Student::getName,
             Student::getEmailAddress)
         .containsExactly(
