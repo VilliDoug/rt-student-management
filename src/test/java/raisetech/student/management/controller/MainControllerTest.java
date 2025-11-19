@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import raisetech.student.management.data.ApplicationStatus;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.data.Student;
+import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.MainService;
 
@@ -154,8 +157,12 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
+    ApplicationStatus status = new ApplicationStatus();
 
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    CourseDetail courseDetail = new CourseDetail(course, status);
+    List<CourseDetail> courseDetailList = List.of(courseDetail);
+
+    StudentDetail expectedDetail = new StudentDetail(student, courseDetailList);
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
@@ -187,7 +194,7 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    StudentDetail expectedDetail = new StudentDetail();
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
@@ -216,7 +223,7 @@ class MainControllerTest {
     Course course = new Course();
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    StudentDetail expectedDetail = new StudentDetail();
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
     when(service.registerStudent(Mockito.any(StudentDetail.class)))
@@ -248,7 +255,7 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    StudentDetail expectedDetail = new StudentDetail();
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
@@ -277,7 +284,7 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    StudentDetail expectedDetail = new StudentDetail();
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
@@ -309,7 +316,7 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    StudentDetail expectedDetail = new StudentDetail();
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 

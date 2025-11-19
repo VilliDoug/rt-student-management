@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import raisetech.student.management.data.ApplicationStatus;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.data.Student;
 
@@ -177,9 +178,78 @@ class MainRepositoryTest {
             "9",
             "5",
             "Crash Test Course");
+  }
+
+  @Test
+  void 申込状況情報の全件検索が行えること() {
+    List<ApplicationStatus> actual = sut.searchAllStatus();
+    assertThat(actual.size()).isEqualTo(10);
+  }
+
+  @Test
+  void 申込状況をコースIDで取得処理が行えること() {
+    String courseId = new String("2");
+    List<String> courseIdList = List.of(courseId);
+
+    List<ApplicationStatus> actualStatus = sut.fetchStatusByCourseIds(courseIdList);
+    assertThat(actualStatus).isNotNull();
+    assertThat(actualStatus.get(0).getCourseId()).isEqualTo("2");
+    assertThat(actualStatus).extracting(
+        ApplicationStatus::getId,
+        ApplicationStatus::getCourseId,
+        ApplicationStatus::getApplicationStatus)
+        .containsExactly(tuple(
+            "2","2","受講中"
+        ));
+
+  }
+
+  @Test
+  void 申込状況の登録が適切に行えること() {
+    ApplicationStatus status = new ApplicationStatus();
+    status.setId("1");
+    status.setCourseId("1");
+    status.setApplicationStatus("本申込");
+
+    sut.registerStatus(status);
+
+    List<ApplicationStatus> actual = sut.searchAllStatus();
+
+    assertThat(actual.size()).isEqualTo(11);
+
+  }
+
+  @Test
+  void 申込状況の更新が適切に行えること() {
+    ApplicationStatus expected = new ApplicationStatus();
+    expected.setCourseId("1");
+    expected.setApplicationStatus("仮申込");
+
+    sut.registerStatus(expected);
+
+    assertThat(expected).extracting(
+        ApplicationStatus::getCourseId,
+        ApplicationStatus::getApplicationStatus)
+        .containsExactly("1","仮申込");
+
+    ApplicationStatus actual = new ApplicationStatus();
+
+    actual.setCourseId(expected.getCourseId());
+    actual.setApplicationStatus("本申込");
+
+    sut.updateStatus(actual);
+
+    assertThat(actual).extracting(
+        ApplicationStatus::getCourseId,
+        ApplicationStatus::getApplicationStatus)
+        .containsExactly("1","本申込");
 
   }
 
 }
+
+
+
+
 
 

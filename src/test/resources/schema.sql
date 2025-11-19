@@ -20,3 +20,10 @@ CREATE TABLE IF NOT EXISTS student_courses
   course_start_at TIMESTAMP,
   course_end_at TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS application_status
+(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  course_id INT NOT NULL,
+  application_status ENUM('仮申込', '本申込', '受講中', '受講終了') NOT NULL
+);

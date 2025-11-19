@@ -2,12 +2,15 @@ package raisetech.student.management.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.controller.converter.MainConverter;
+import raisetech.student.management.data.ApplicationStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
+import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.repository.MainRepository;
 
@@ -40,7 +43,9 @@ public class MainService {
   public List<StudentDetail> searchStudentList() {
     List<Student> studentList = repository.searchAllStudents();
     List<Course> courseList = repository.searchAllCourses();
-    return converter.convertDetails(studentList, courseList);  }
+    List<ApplicationStatus> statusList = repository.searchAllStatus();
+    return converter.convertDetails(studentList, courseList, statusList);
+  }
 
   /**
    * 受講生詳細検索です。
@@ -51,8 +56,15 @@ public class MainService {
    */
   public StudentDetail searchStudentId(String id) {
     Student student = repository.fetchById(id);
+    List<Student> studentList = List.of(student);
     List<Course> courseList = repository.fetchCourseById(student.getId());
-    return new StudentDetail(student, courseList);
+    List<String> courseIdList =  courseList.stream()
+        .map(course -> course.getId())
+        .collect(Collectors.toList());
+    List<ApplicationStatus> statusList = repository.fetchStatusByCourseIds(courseIdList);
+    List<StudentDetail> detailList = converter.convertDetails(studentList, courseList, statusList);
+    return  detailList.get(0);
+
   }
 
   /**
@@ -65,12 +77,15 @@ public class MainService {
   @Transactional
   public StudentDetail registerStudent(StudentDetail studentDetail) {
     Student student = studentDetail.getStudent();
-
     repository.registerStudent(student);
-    studentDetail.getCourseList().forEach(course -> {
-      initStudentCourse(course, student);
-      repository.registerCourse(course);
-    });
+    studentDetail.getCourseDetailList().forEach(courseDetail -> {
+          Course course = courseDetail.getCourse();
+          ApplicationStatus status = courseDetail.getApplicationStatus();
+          initStudentCourse(course, student);
+          repository.registerCourse(course);
+          status.setCourseId(course.getId());
+          repository.registerStatus(status);
+        });
     return studentDetail;
   }
 
@@ -92,9 +107,11 @@ public class MainService {
    */
   @Transactional
   public void updateStudent(StudentDetail studentDetail) {
+    studentDetail.getCourseDetailList().forEach(courseDetail -> {
+      repository.updateCourseName(courseDetail.getCourse());
+      repository.updateStatus(courseDetail.getApplicationStatus());
+    });
     repository.updateStudent(studentDetail.getStudent());
-    studentDetail.getCourseList()
-        .forEach(course -> repository.updateCourseName(course));
   }
 
 }

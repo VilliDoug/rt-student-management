@@ -2,6 +2,7 @@ package raisetech.student.management.repository;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import raisetech.student.management.data.ApplicationStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
 
@@ -52,7 +53,7 @@ public interface MainRepository {
   /**
    * 受講生コース情報を新規登録します。IDに関しては自動採番を行う。
    *
-   * @param student　受講生コース情報
+   * @param course　受講生コース情報
    */
   void registerCourse(Course course);
 
@@ -70,7 +71,23 @@ public interface MainRepository {
    */
   void updateCourseName(Course course);
 
+  /**
+   * 申込状況の全件検索
+   *
+   * @return
+   */
+  List<ApplicationStatus> searchAllStatus();
 
+  /**
+   * 申込状況をコースIDに紐づく申込状況検索を行います。
+   *
+   * @return　申込状況
+   */
+  List<ApplicationStatus> fetchStatusByCourseIds(List<String> courseId);
+
+  void registerStatus(ApplicationStatus applicationStatus);
+
+  void updateStatus(ApplicationStatus applicationStatus);
 
 
 }

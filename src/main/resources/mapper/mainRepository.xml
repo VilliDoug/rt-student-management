@@ -56,5 +56,31 @@
       course_name = #{courseName}
     WHERE id = #{id}
   </update>
+<!--  select all application status-->
+  <select id="searchAllStatus" resultType="raisetech.student.management.data.ApplicationStatus">
+    SELECT * FROM application_status
+  </select>
+<!--  select status by course ID-->
+  <select id="fetchStatusByCourseIds" resultType="raisetech.student.management.data.ApplicationStatus">
+    SELECT * FROM application_status
+    WHERE course_id IN
+    <foreach item="id" collection="list" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+<!--  register new application status-->
+  <insert id="registerStatus" parameterType="raisetech.student.management.data.ApplicationStatus"
+    useGeneratedKeys ="true" keyProperty = "id">
+    INSERT INTO application_status (course_id, application_status)
+    VALUES (#{courseId}, #{applicationStatus})
+  </insert>
+<!--  update application status-->
+  <update id="updateStatus" parameterType="raisetech.student.management.data.ApplicationStatus">
+    UPDATE application_status
+    SET
+      application_status = #{applicationStatus}
+    WHERE id = #{id}
+  </update>
+
 
 </mapper>
