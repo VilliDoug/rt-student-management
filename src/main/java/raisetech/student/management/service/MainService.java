@@ -40,10 +40,19 @@ public class MainService {
    *
    * @return　受講生詳細一覧（全件）
    */
-  public List<StudentDetail> searchStudentList() {
-    List<Student> studentList = repository.searchAllStudents();
-    List<Course> courseList = repository.searchAllCourses();
-    List<ApplicationStatus> statusList = repository.searchAllStatus();
+  public List<StudentDetail> searchStudentList(
+      String name,
+      String emailAddress,
+      String gender,
+      String courseName,
+      String applicationStatus) {
+    List<Student> studentList = repository.searchStudentByCriteria(
+        name, emailAddress, gender, courseName, applicationStatus);
+    List<String> studentIdList = studentList.stream()
+        .map(student -> student.getId())
+        .toList();
+    List<Course> courseList = repository.searchCoursesByStudentId(studentIdList);
+    List<ApplicationStatus> statusList = repository.searchStatusByStudentId(studentIdList);
     return converter.convertDetails(studentList, courseList, statusList);
   }
 
@@ -109,9 +118,16 @@ public class MainService {
   public void updateStudent(StudentDetail studentDetail) {
     studentDetail.getCourseDetailList().forEach(courseDetail -> {
       repository.updateCourseName(courseDetail.getCourse());
-      repository.updateStatus(courseDetail.getApplicationStatus());
+      if (courseDetail.getApplicationStatus().getId() == null ||
+          courseDetail.getApplicationStatus().getId().isEmpty()) {
+        courseDetail.getApplicationStatus().setApplicationStatus("仮申込");
+        repository.registerStatus(courseDetail.getApplicationStatus());
+      } else {
+        repository.updateStatus(courseDetail.getApplicationStatus());
+      }
     });
     repository.updateStudent(studentDetail.getStudent());
   }
-
 }
+
+

@@ -21,7 +21,7 @@ public class MainConverter {
   /**
    * 受講生に紐づく受講生コース情報をマッピングする。
    * 受講生コース情報は受講生に対して複数存在するのでループを回して受講生詳細情報を組み立てる。
-   * 
+   *
    * @param studentList
    * @param courseList
    * @param statusList
@@ -32,6 +32,12 @@ public class MainConverter {
       List<Course> courseList,
       List<ApplicationStatus> statusList) {
     if (studentList == null || studentList.isEmpty()) {
+      return Collections.emptyList();
+    }
+    if (courseList == null || courseList.isEmpty()) {
+      return Collections.emptyList();
+    }
+    if (statusList == null || studentList.isEmpty()) {
       return Collections.emptyList();
     }
 

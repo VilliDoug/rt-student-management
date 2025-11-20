@@ -19,7 +19,7 @@ VALUES
     (5, 'AWSコース', '2023-12-01 12:00:00', '2024-04-01 18:00:00'),
     (1, 'Web制作コース', '2024-01-01 13:00:00', '2024-05-01 19:00:00');
 
-INSERT INTO application_status (course_ID, application_status)
+INSERT INTO application_status (course_id, application_status)
 VALUES
     (1, '受講中'),
     (2, '受講中'),

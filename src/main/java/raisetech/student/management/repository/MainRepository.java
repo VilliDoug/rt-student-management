@@ -2,6 +2,7 @@ package raisetech.student.management.repository;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import raisetech.student.management.data.ApplicationStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
@@ -33,6 +34,13 @@ public interface MainRepository {
    * @return　受講生（削除無し）
    */
   List<Student> searchNotDeletedStudent();
+
+  List<Student> searchStudentByCriteria(
+      @Param("name") String name,
+      @Param("emailAddress") String emailAddress,
+      @Param("gender") String gender,
+      @Param("courseName") String courseName,
+      @Param("applicationStatus") String applicationStatus);
 
   /**
    * 受講生のコース情報の全件検索を行います。
@@ -89,5 +97,8 @@ public interface MainRepository {
 
   void updateStatus(ApplicationStatus applicationStatus);
 
+  List<Course> searchCoursesByStudentId(List<String> studentId);
+
+  List<ApplicationStatus> searchStatusByStudentId(List<String> studentId);
 
 }

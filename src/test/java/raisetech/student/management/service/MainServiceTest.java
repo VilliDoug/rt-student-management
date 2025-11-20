@@ -46,14 +46,18 @@ class MainServiceTest {
     List<ApplicationStatus> statusList = new ArrayList<>();
     List<StudentDetail> expectedDetails = new ArrayList<>();
 
-    when(repository.searchAllStudents()).thenReturn(studentList);
+    when(repository.searchStudentByCriteria(
+        null, null, null, null, null))
+        .thenReturn(studentList);
     when(repository.searchAllCourses()).thenReturn(courseList);
     when(repository.searchAllStatus()).thenReturn(statusList);
     when(converter.convertDetails(studentList, courseList, statusList)).thenReturn(expectedDetails);
 
-    List<StudentDetail> actual = sut.searchStudentList();
+    List<StudentDetail> actual = sut.searchStudentList(
+        null, null, null, null ,null);
 
-    verify(repository, times(1)).searchAllStudents();
+    verify(repository, times(1)).searchStudentByCriteria(
+        null, null, null, null, null);
     verify(repository, times(1)).searchAllCourses();
     verify(repository, times(1)).searchAllStatus();
     verify(converter, times(1)).convertDetails(studentList, courseList, statusList);

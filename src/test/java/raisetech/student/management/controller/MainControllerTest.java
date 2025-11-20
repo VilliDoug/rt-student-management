@@ -56,7 +56,8 @@ class MainControllerTest {
     mockMvc.perform(MockMvcRequestBuilders.get("/studentList"))
         .andExpect(status().isOk());
 
-    verify(service, times(1)).searchStudentList();
+    verify(service, times(1)).searchStudentList(
+        null, null, null, null, null);
   }
 
   /**
@@ -64,13 +65,14 @@ class MainControllerTest {
    */
   @Test
   void 受講生詳細の一覧検索が内部エラー発生すること() throws Exception {
-    when(service.searchStudentList())
+    when(service.searchStudentList(null, null, null, null, null))
         .thenThrow(new RuntimeException("内部サーバー エラーが発生しました。"));
 
     mockMvc.perform(MockMvcRequestBuilders.get("/studentList"))
         .andExpect(status().isInternalServerError());
 
-    verify(service, times(1)).searchStudentList();
+    verify(service, times(1)).searchStudentList(
+        null, null, null, null, null);
   }
 
   /**
@@ -336,4 +338,40 @@ class MainControllerTest {
 
   }
 
+  @Test
+  void 氏名で受講生詳細を検索した時一致する受講生が返されること() throws Exception {
+    String expectedName = "Test";
+    List<StudentDetail> expectedDetails = List.of(new StudentDetail());
+
+    when(service.searchStudentList(expectedName, null, null,null,null))
+        .thenReturn(expectedDetails);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/studentList?name=Test"))
+        .andExpect(status().isOk());
+
+    verify(service, times(1))
+        .searchStudentList(expectedName, null, null, null, null);
+
+  }
+
+  @Test
+  void 全ての条件で受講生詳細を検索条件した時一致する受講生が返されること() throws Exception {
+    String name = "Tommy";
+    String emailAddress = "bommytums@example.com";
+    String gender = "Male";
+    String courseName = "Show";
+    String applicationStatus = "Expelled";
+    List<StudentDetail> expectedDetails = List.of(new StudentDetail());
+
+    when(service.searchStudentList(name, courseName, applicationStatus, emailAddress, gender))
+        .thenReturn(expectedDetails);
+
+    mockMvc.perform(MockMvcRequestBuilders.get(
+        "/studentList?name=Tommy&emailAddress=bommytums@example.com&gender=Male&courseName=Show&applicationStatus=Expelled"))
+        .andExpect(status().isOk());
+
+    verify(service, times(1))
+        .searchStudentList(name, courseName, applicationStatus, emailAddress, gender);
+
+  }
 }
