@@ -363,7 +363,7 @@ class MainControllerTest {
     String applicationStatus = "Expelled";
     List<StudentDetail> expectedDetails = List.of(new StudentDetail());
 
-    when(service.searchStudentList(name, courseName, applicationStatus, emailAddress, gender))
+    when(service.searchStudentList(name, emailAddress, gender, courseName, applicationStatus))
         .thenReturn(expectedDetails);
 
     mockMvc.perform(MockMvcRequestBuilders.get(
@@ -371,7 +371,7 @@ class MainControllerTest {
         .andExpect(status().isOk());
 
     verify(service, times(1))
-        .searchStudentList(name, courseName, applicationStatus, emailAddress, gender);
+        .searchStudentList(name, emailAddress, gender, courseName, applicationStatus);
 
   }
 }

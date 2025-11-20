@@ -62,7 +62,6 @@ public class MainController {
       @RequestParam(required = false) String courseName,
       @RequestParam(required = false) String applicationStatus
   ) {
-    System.out.println("--- REQUEST RECEIVED ---");
     return service.searchStudentList(name, emailAddress, gender, courseName, applicationStatus);
   }
 

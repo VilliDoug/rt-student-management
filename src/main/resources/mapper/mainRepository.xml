@@ -122,8 +122,8 @@
     s.remark,
     s.was_deleted
     FROM students s
-    INNER JOIN student_courses c ON s.id = c.student_id
-    INNER JOIN application_status a ON c.id = a.course_id
+    LEFT JOIN student_courses c ON s.id = c.student_id
+    LEFT JOIN application_status a ON c.id = a.course_id
     <where>
       <if test="name != null and name != ''">
         AND s.name LIKE CONCAT('%', #{name}, '%')

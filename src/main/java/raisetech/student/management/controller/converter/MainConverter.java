@@ -37,7 +37,7 @@ public class MainConverter {
     if (courseList == null || courseList.isEmpty()) {
       return Collections.emptyList();
     }
-    if (statusList == null || studentList.isEmpty()) {
+    if (statusList == null || statusList.isEmpty()) {
       return Collections.emptyList();
     }
 

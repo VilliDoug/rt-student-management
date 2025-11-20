@@ -89,7 +89,13 @@ public class MainService {
     repository.registerStudent(student);
     studentDetail.getCourseDetailList().forEach(courseDetail -> {
           Course course = courseDetail.getCourse();
+          courseDetail.getApplicationStatus().setApplicationStatus("仮申込");
           ApplicationStatus status = courseDetail.getApplicationStatus();
+          if (status == null ||
+              status.getApplicationStatus() == null ||
+              status.getApplicationStatus().isBlank()) {
+            return;
+          }
           initStudentCourse(course, student);
           repository.registerCourse(course);
           status.setCourseId(course.getId());
