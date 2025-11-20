@@ -71,29 +71,19 @@
 <!--  course by student id-->
   <select id="searchCoursesByStudentId" resultType="raisetech.student.management.data.Course">
     SELECT * FROM student_courses
-    WHERE 1=1
-    <if test="list != null and list.size > 0">
-      AND student_id IN
+    WHERE student_id IN
       <foreach item="id" collection="list" open="(" separator="," close=")">
         #{id}
       </foreach>
-    </if>
-    <if test="list == null or list.size == 0">
-      AND 1=0  </if>
   </select>
 <!--  status by student id-->
   <select id="searchStatusByStudentId" resultType="raisetech.student.management.data.ApplicationStatus">
     SELECT a.* FROM application_status a
     INNER JOIN student_courses c ON a.course_id = c.id
-    WHERE 1=1
-    <if test="list != null and list.size > 0">
-      AND c.student_id IN
+    WHERE c.student_id IN
       <foreach item="id" collection="list" open="(" separator="," close=")">
         #{id}
       </foreach>
-    </if>
-    <if test="list == null or list.size == 0">
-      AND 1=0  </if>
   </select>
 <!--  register new application status-->
   <insert id="registerStatus" parameterType="raisetech.student.management.data.ApplicationStatus"

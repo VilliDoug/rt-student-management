@@ -25,7 +25,7 @@ public class MainConverter {
    * @param studentList
    * @param courseList
    * @param statusList
-   * @return
+   * @return StudentDetail list
    */
   public List<StudentDetail> convertDetails(
       List<Student> studentList,
@@ -34,20 +34,16 @@ public class MainConverter {
     if (studentList == null || studentList.isEmpty()) {
       return Collections.emptyList();
     }
-    if (courseList == null || courseList.isEmpty()) {
-      return Collections.emptyList();
-    }
-    if (statusList == null || statusList.isEmpty()) {
-      return Collections.emptyList();
-    }
-
+    List<Course> safeCourseList = (
+        courseList == null || courseList.isEmpty()) ? Collections.emptyList() : courseList;
+    List<ApplicationStatus> safeStatusList = (
+        statusList == null || statusList.isEmpty()) ? Collections.emptyList() : statusList;
     List<CourseDetail> courseDetailList = new ArrayList<>();
 
-    courseList.forEach(course -> {
+    safeCourseList.forEach(course -> {
       CourseDetail courseDetail = new CourseDetail();
       courseDetail.setCourse(course);
-
-      ApplicationStatus optionalStatus = statusList.stream()
+      ApplicationStatus optionalStatus = safeStatusList.stream()
           .filter(status -> Objects.equals(course.getId(), status.getCourseId()))
           .findFirst()
           .orElse(null);
@@ -57,13 +53,13 @@ public class MainConverter {
     });
 
     List<StudentDetail> details = new ArrayList<>();
-
     studentList.forEach(student -> {
       StudentDetail studentDetail = new StudentDetail();
       studentDetail.setStudent(student);
 
       List<CourseDetail> matchCourseList = courseDetailList.stream()
-          .filter (courseDetail -> Objects.equals(student.getId(), courseDetail.getCourse().getStudentId()))
+          .filter (courseDetail -> courseDetail.getCourse() != null &&
+              Objects.equals(student.getId(), courseDetail.getCourse().getStudentId()))
           .collect(Collectors.toList());
 
       studentDetail.setCourseDetailList(matchCourseList);

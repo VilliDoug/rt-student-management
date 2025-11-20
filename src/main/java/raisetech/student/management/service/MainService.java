@@ -2,6 +2,7 @@ package raisetech.student.management.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,20 +88,18 @@ public class MainService {
   public StudentDetail registerStudent(StudentDetail studentDetail) {
     Student student = studentDetail.getStudent();
     repository.registerStudent(student);
+
     studentDetail.getCourseDetailList().forEach(courseDetail -> {
-          Course course = courseDetail.getCourse();
-          courseDetail.getApplicationStatus().setApplicationStatus("仮申込");
-          ApplicationStatus status = courseDetail.getApplicationStatus();
-          if (status == null ||
-              status.getApplicationStatus() == null ||
-              status.getApplicationStatus().isBlank()) {
-            return;
-          }
-          initStudentCourse(course, student);
-          repository.registerCourse(course);
-          status.setCourseId(course.getId());
-          repository.registerStatus(status);
-        });
+      Course course = courseDetail.getCourse();
+      ApplicationStatus status = Objects.requireNonNullElse(
+          courseDetail.getApplicationStatus(), new ApplicationStatus());
+      status.setApplicationStatus("仮申込");
+
+      initStudentCourse(course, student);
+      repository.registerCourse(course);
+      status.setCourseId(course.getId());
+      repository.registerStatus(status);
+    });
     return studentDetail;
   }
 
@@ -124,12 +123,13 @@ public class MainService {
   public void updateStudent(StudentDetail studentDetail) {
     studentDetail.getCourseDetailList().forEach(courseDetail -> {
       repository.updateCourseName(courseDetail.getCourse());
-      if (courseDetail.getApplicationStatus().getId() == null ||
-          courseDetail.getApplicationStatus().getId().isEmpty()) {
-        courseDetail.getApplicationStatus().setApplicationStatus("仮申込");
-        repository.registerStatus(courseDetail.getApplicationStatus());
+      ApplicationStatus status = Objects.requireNonNullElse(
+          courseDetail.getApplicationStatus(), new ApplicationStatus());
+      if (status.getId() == null) {
+        status.setApplicationStatus("仮申込");
+        repository.registerStatus(status);
       } else {
-        repository.updateStatus(courseDetail.getApplicationStatus());
+        repository.updateStatus(status);
       }
     });
     repository.updateStudent(studentDetail.getStudent());
