@@ -246,6 +246,20 @@ class MainRepositoryTest {
 
   }
 
+  @Test
+  void 新規コース登録時にIDが自動採番されること() {
+    Course course = new Course();
+    course.setStudentId("322");
+    course.setCourseName("Test");
+
+    sut.registerCourse(course);
+
+    assertThat(course.getId()).isNotNull();
+    assertThat(course.getId()).isNotEmpty();
+    assertThat(Integer.parseInt(course.getId())).isGreaterThan(0);
+
+  }
+
 }
 
 

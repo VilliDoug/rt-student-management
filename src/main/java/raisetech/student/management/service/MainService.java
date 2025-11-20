@@ -12,7 +12,6 @@ import raisetech.student.management.controller.converter.MainConverter;
 import raisetech.student.management.data.ApplicationStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
-import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.repository.MainRepository;
 
@@ -70,14 +69,27 @@ public class MainService {
    */
   public StudentDetail searchStudentId(String id) {
     Student student = repository.fetchById(id);
+    if (student == null) {
+      return null;
+    }
     List<Student> studentList = List.of(student);
-    List<Course> courseList = repository.fetchCourseById(student.getId());
+    List<Course> fetchedCourseList = repository.fetchCourseById(student.getId());
+    List<Course> courseList = (fetchedCourseList == null)
+        ? Collections.emptyList()
+        : fetchedCourseList;
+
     List<String> courseIdList =  courseList.stream()
         .map(course -> course.getId())
         .collect(Collectors.toList());
-    List<ApplicationStatus> statusList = repository.fetchStatusByCourseIds(courseIdList);
+    List<ApplicationStatus> statusList = (courseIdList.isEmpty())
+        ? Collections.emptyList()
+        : repository.fetchStatusByCourseIds(courseIdList);
     List<StudentDetail> detailList = converter.convertDetails(studentList, courseList, statusList);
-    return  detailList.get(0);
+    if (detailList.isEmpty()) {
+      return null;
+    } else {
+      return detailList.get(0);
+    }
 
   }
 
