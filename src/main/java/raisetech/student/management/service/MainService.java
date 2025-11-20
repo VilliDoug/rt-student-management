@@ -1,6 +1,7 @@
 package raisetech.student.management.service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -49,6 +50,9 @@ public class MainService {
       String applicationStatus) {
     List<Student> studentList = repository.searchStudentByCriteria(
         name, emailAddress, gender, courseName, applicationStatus);
+    if (studentList == null || studentList.isEmpty()) {
+      return converter.convertDetails(studentList, Collections.emptyList(), Collections.emptyList());
+    }
     List<String> studentIdList = studentList.stream()
         .map(student -> student.getId())
         .toList();
@@ -104,17 +108,6 @@ public class MainService {
   }
 
   /**
-   * 受講生コース情報を登録する際の初期情報を設定する
-   *
-   * @param course　受講生コース情報
-   * @param student　受講生
-   */
-  void initStudentCourse(Course course, Student student) {
-    course.setStudentId(student.getId());
-    course.setCourseStartAt(String.valueOf(LocalDate.now()));
-  }
-
-  /**
    * 受講生詳細の更新を行います。受講生と受講生コース情報をそれぞれ更新します。
    *
    * @param studentDetail　受講生詳細
@@ -123,8 +116,12 @@ public class MainService {
   public void updateStudent(StudentDetail studentDetail) {
     studentDetail.getCourseDetailList().forEach(courseDetail -> {
       repository.updateCourseName(courseDetail.getCourse());
+      Course course = courseDetail.getCourse();
+
       ApplicationStatus status = Objects.requireNonNullElse(
           courseDetail.getApplicationStatus(), new ApplicationStatus());
+      status.setCourseId(course.getId());
+
       if (status.getId() == null) {
         status.setApplicationStatus("仮申込");
         repository.registerStatus(status);
@@ -133,6 +130,17 @@ public class MainService {
       }
     });
     repository.updateStudent(studentDetail.getStudent());
+  }
+
+  /**
+   * 受講生コース情報を登録する際の初期情報を設定する
+   *
+   * @param course　受講生コース情報
+   * @param student　受講生
+   */
+  void initStudentCourse(Course course, Student student) {
+    course.setStudentId(student.getId());
+    course.setCourseStartAt(String.valueOf(LocalDate.now()));
   }
 }
 
