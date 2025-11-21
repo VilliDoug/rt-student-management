@@ -2,6 +2,7 @@ package raisetech.student.management.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,25 +42,30 @@ class MainServiceTest {
 
   @Test
   void 受講生詳細の一覧検索_リポジトリとコンバーターの処理が適切に呼び出されていること() {
-    List<Student> studentList = new ArrayList<>();
-    List<Course> courseList = new ArrayList<>();
-    List<ApplicationStatus> statusList = new ArrayList<>();
+    Student mockStudent = mock(Student.class);
+    List<Student> studentList = List.of(mockStudent);
+    Course mockCourse = mock(Course.class);
+    List<Course> courseList = List.of(mockCourse);
+    ApplicationStatus mockStatus = mock(ApplicationStatus.class);
+    List<ApplicationStatus> statusList = List.of(mockStatus);
     List<StudentDetail> expectedDetails = new ArrayList<>();
+
+    when(mockStudent.getId()).thenReturn("1");
 
     when(repository.searchStudentByCriteria(
         null, null, null, null, null))
         .thenReturn(studentList);
-    when(repository.searchAllCourses()).thenReturn(courseList);
-    when(repository.searchAllStatus()).thenReturn(statusList);
-    when(converter.convertDetails(studentList, courseList, statusList)).thenReturn(expectedDetails);
+    when(repository.searchCoursesByStudentId(anyList())).thenReturn(courseList);
+    when(repository.searchStatusByStudentId(anyList())).thenReturn(statusList);
+    when(converter.convertDetails(anyList(), anyList(), anyList())).thenReturn(expectedDetails);
 
     List<StudentDetail> actual = sut.searchStudentList(
         null, null, null, null ,null);
 
     verify(repository, times(1)).searchStudentByCriteria(
         null, null, null, null, null);
-    verify(repository, times(1)).searchAllCourses();
-    verify(repository, times(1)).searchAllStatus();
+    verify(repository, times(1)).searchCoursesByStudentId(anyList());
+    verify(repository, times(1)).searchStatusByStudentId(anyList());
     verify(converter, times(1)).convertDetails(studentList, courseList, statusList);
 
     assertEquals(expectedDetails, actual);
@@ -132,8 +138,11 @@ class MainServiceTest {
     Student student = new Student();
     student.setId("777");
     Course course = new Course();
+    course.setId("123");
     course.setCourseName("Slot Mechanic");
     ApplicationStatus status = new ApplicationStatus();
+    status.setId("444");
+    status.setCourseId("123");
     status.setApplicationStatus("仮申込");
     CourseDetail courseDetail = new CourseDetail(course, status);
     List<CourseDetail> courseDetailList = List.of(courseDetail);

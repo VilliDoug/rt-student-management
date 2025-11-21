@@ -197,6 +197,7 @@ class MainControllerTest {
     List<Course> courseList = List.of(course);
 
     StudentDetail expectedDetail = new StudentDetail();
+    expectedDetail.setStudent(student);
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
@@ -287,6 +288,7 @@ class MainControllerTest {
     List<Course> courseList = List.of(course);
 
     StudentDetail expectedDetail = new StudentDetail();
+    expectedDetail.setStudent(student);
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
