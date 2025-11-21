@@ -25,7 +25,7 @@ public class MainConverter {
    * @param studentList
    * @param courseList
    * @param statusList
-   * @return StudentDetail list
+   * @return details 受講生詳細
    */
   public List<StudentDetail> convertDetails(
       List<Student> studentList,

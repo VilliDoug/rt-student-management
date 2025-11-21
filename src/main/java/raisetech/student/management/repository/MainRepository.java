@@ -35,6 +35,16 @@ public interface MainRepository {
    */
   List<Student> searchNotDeletedStudent();
 
+  /**
+   * 条件付き検索を行います。
+   *
+   * @param name
+   * @param emailAddress
+   * @param gender
+   * @param courseName
+   * @param applicationStatus
+   * @return　受講生情報
+   */
   List<Student> searchStudentByCriteria(
       @Param("name") String name,
       @Param("emailAddress") String emailAddress,
@@ -49,6 +59,11 @@ public interface MainRepository {
    */
   List<Course> searchAllCourses();
 
+  /**
+   *
+   * @param studentId
+   * @return コースIDに紐づく受講生情報
+   */
   List<Course> fetchCourseById(String studentId);
 
   /**
@@ -93,12 +108,30 @@ public interface MainRepository {
    */
   List<ApplicationStatus> fetchStatusByCourseIds(List<String> courseId);
 
+  /**
+   *
+   * @param applicationStatus
+   */
   void registerStatus(ApplicationStatus applicationStatus);
 
+  /**
+   *
+   * @param applicationStatus
+   */
   void updateStatus(ApplicationStatus applicationStatus);
 
+  /**
+   *
+   * @param studentId
+   * @return 受講生IDで抽出したコース情報
+   */
   List<Course> searchCoursesByStudentId(List<String> studentId);
 
+  /**
+   *
+   * @param studentId
+   * @return 受講生IDで抽出した申込状況
+   */
   List<ApplicationStatus> searchStatusByStudentId(List<String> studentId);
 
 }

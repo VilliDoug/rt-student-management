@@ -68,7 +68,7 @@
       #{id}
     </foreach>
   </select>
-<!--  course by student id-->
+<!-- select course by student id-->
   <select id="searchCoursesByStudentId" resultType="raisetech.student.management.data.Course">
     SELECT * FROM student_courses
     WHERE student_id IN
@@ -76,7 +76,7 @@
         #{id}
       </foreach>
   </select>
-<!--  status by student id-->
+<!-- select status by student id-->
   <select id="searchStatusByStudentId" resultType="raisetech.student.management.data.ApplicationStatus">
     SELECT a.* FROM application_status a
     INNER JOIN student_courses c ON a.course_id = c.id
@@ -131,8 +131,5 @@
         AND a.application_status LIKE CONCAT('%', #{applicationStatus}, '%')
       </if>
     </where>
-    
   </select>
-
-
 </mapper>
