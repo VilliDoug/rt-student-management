@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.controller.handler.response.ApiErrorResponse;
 import raisetech.student.management.controller.handler.response.ValidationErrorResponse;
@@ -54,8 +55,14 @@ public class MainController {
   })
   @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
   @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList() {
-    return service.searchStudentList();
+  public List<StudentDetail> getStudentList(
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) String emailAddress,
+      @RequestParam(required = false) String gender,
+      @RequestParam(required = false) String courseName,
+      @RequestParam(required = false) String applicationStatus
+  ) {
+    return service.searchStudentList(name, emailAddress, gender, courseName, applicationStatus);
   }
 
   /**

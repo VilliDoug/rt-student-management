@@ -56,5 +56,80 @@
       course_name = #{courseName}
     WHERE id = #{id}
   </update>
-
+<!--  select all application status-->
+  <select id="searchAllStatus" resultType="raisetech.student.management.data.ApplicationStatus">
+    SELECT * FROM application_status
+  </select>
+<!--  select status by course ID-->
+  <select id="fetchStatusByCourseIds" resultType="raisetech.student.management.data.ApplicationStatus">
+    SELECT * FROM application_status
+    WHERE course_id IN
+    <foreach item="id" collection="list" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+<!-- select course by student id-->
+  <select id="searchCoursesByStudentId" resultType="raisetech.student.management.data.Course">
+    SELECT * FROM student_courses
+    WHERE student_id IN
+      <foreach item="id" collection="list" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+  </select>
+<!-- select status by student id-->
+  <select id="searchStatusByStudentId" resultType="raisetech.student.management.data.ApplicationStatus">
+    SELECT a.* FROM application_status a
+    INNER JOIN student_courses c ON a.course_id = c.id
+    WHERE c.student_id IN
+      <foreach item="id" collection="list" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+  </select>
+<!--  register new application status-->
+  <insert id="registerStatus" parameterType="raisetech.student.management.data.ApplicationStatus"
+    useGeneratedKeys ="true" keyProperty = "id">
+    INSERT INTO application_status (course_id, application_status)
+    VALUES (#{courseId}, #{applicationStatus})
+  </insert>
+<!--  update application status-->
+  <update id="updateStatus" parameterType="raisetech.student.management.data.ApplicationStatus">
+    UPDATE application_status
+    SET
+      application_status = #{applicationStatus}
+    WHERE id = #{id}
+  </update>
+<!--  select student by criteria-->
+  <select id="searchStudentByCriteria" resultType="raisetech.student.management.data.Student">
+    SELECT DISTINCT
+    s.id,
+    s.name,
+    s.kana_name,
+    s.nickname,
+    s.email_address,
+    s.residence,
+    s.age,
+    s.gender,
+    s.remark,
+    s.was_deleted
+    FROM students s
+    LEFT JOIN student_courses c ON s.id = c.student_id
+    LEFT JOIN application_status a ON c.id = a.course_id
+    <where>
+      <if test="name != null and name != ''">
+        AND s.name LIKE CONCAT('%', #{name}, '%')
+      </if>
+      <if test="emailAddress != null and emailAddress != ''">
+        AND s.email_address LIKE CONCAT('%', #{emailAddress}, '%')
+      </if>
+      <if test="gender != null and gender != ''">
+        AND s.gender LIKE CONCAT('%', #{gender}, '%')
+      </if>
+      <if test="courseName != null and courseName != ''">
+        AND c.course_name LIKE CONCAT('%', #{courseName}, '%')
+      </if>
+      <if test="applicationStatus != null and applicationStatus != ''">
+        AND a.application_status LIKE CONCAT('%', #{applicationStatus}, '%')
+      </if>
+    </where>
+  </select>
 </mapper>

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import raisetech.student.management.data.ApplicationStatus;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.data.Student;
+import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.MainService;
 
@@ -53,7 +56,8 @@ class MainControllerTest {
     mockMvc.perform(MockMvcRequestBuilders.get("/studentList"))
         .andExpect(status().isOk());
 
-    verify(service, times(1)).searchStudentList();
+    verify(service, times(1)).searchStudentList(
+        null, null, null, null, null);
   }
 
   /**
@@ -61,13 +65,14 @@ class MainControllerTest {
    */
   @Test
   void 受講生詳細の一覧検索が内部エラー発生すること() throws Exception {
-    when(service.searchStudentList())
+    when(service.searchStudentList(null, null, null, null, null))
         .thenThrow(new RuntimeException("内部サーバー エラーが発生しました。"));
 
     mockMvc.perform(MockMvcRequestBuilders.get("/studentList"))
         .andExpect(status().isInternalServerError());
 
-    verify(service, times(1)).searchStudentList();
+    verify(service, times(1)).searchStudentList(
+        null, null, null, null, null);
   }
 
   /**
@@ -154,8 +159,12 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
+    ApplicationStatus status = new ApplicationStatus();
 
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    CourseDetail courseDetail = new CourseDetail(course, status);
+    List<CourseDetail> courseDetailList = List.of(courseDetail);
+
+    StudentDetail expectedDetail = new StudentDetail(student, courseDetailList);
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
@@ -187,7 +196,8 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    StudentDetail expectedDetail = new StudentDetail();
+    expectedDetail.setStudent(student);
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
@@ -216,7 +226,7 @@ class MainControllerTest {
     Course course = new Course();
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    StudentDetail expectedDetail = new StudentDetail();
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
     when(service.registerStudent(Mockito.any(StudentDetail.class)))
@@ -248,7 +258,7 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    StudentDetail expectedDetail = new StudentDetail();
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
@@ -277,7 +287,8 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    StudentDetail expectedDetail = new StudentDetail();
+    expectedDetail.setStudent(student);
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
@@ -309,7 +320,7 @@ class MainControllerTest {
     course.setCourseName("Crash Test Course");
     List<Course> courseList = List.of(course);
 
-    StudentDetail expectedDetail = new StudentDetail(student, courseList);
+    StudentDetail expectedDetail = new StudentDetail();
 
     String jsonBody = objectMapper.writeValueAsString(expectedDetail);
 
@@ -329,4 +340,40 @@ class MainControllerTest {
 
   }
 
+  @Test
+  void 氏名で受講生詳細を検索した時一致する受講生が返されること() throws Exception {
+    String expectedName = "Test";
+    List<StudentDetail> expectedDetails = List.of(new StudentDetail());
+
+    when(service.searchStudentList(expectedName, null, null,null,null))
+        .thenReturn(expectedDetails);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/studentList?name=Test"))
+        .andExpect(status().isOk());
+
+    verify(service, times(1))
+        .searchStudentList(expectedName, null, null, null, null);
+
+  }
+
+  @Test
+  void 全ての条件で受講生詳細を検索条件した時一致する受講生が返されること() throws Exception {
+    String name = "Tommy";
+    String emailAddress = "bommytums@example.com";
+    String gender = "Male";
+    String courseName = "Show";
+    String applicationStatus = "Expelled";
+    List<StudentDetail> expectedDetails = List.of(new StudentDetail());
+
+    when(service.searchStudentList(name, emailAddress, gender, courseName, applicationStatus))
+        .thenReturn(expectedDetails);
+
+    mockMvc.perform(MockMvcRequestBuilders.get(
+        "/studentList?name=Tommy&emailAddress=bommytums@example.com&gender=Male&courseName=Show&applicationStatus=Expelled"))
+        .andExpect(status().isOk());
+
+    verify(service, times(1))
+        .searchStudentList(name, emailAddress, gender, courseName, applicationStatus);
+
+  }
 }

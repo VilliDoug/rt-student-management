@@ -1,11 +1,15 @@
 package raisetech.student.management.service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.controller.converter.MainConverter;
+import raisetech.student.management.data.ApplicationStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.Course;
 import raisetech.student.management.domain.StudentDetail;
@@ -37,10 +41,24 @@ public class MainService {
    *
    * @return　受講生詳細一覧（全件）
    */
-  public List<StudentDetail> searchStudentList() {
-    List<Student> studentList = repository.searchAllStudents();
-    List<Course> courseList = repository.searchAllCourses();
-    return converter.convertDetails(studentList, courseList);  }
+  public List<StudentDetail> searchStudentList(
+      String name,
+      String emailAddress,
+      String gender,
+      String courseName,
+      String applicationStatus) {
+    List<Student> studentList = repository.searchStudentByCriteria(
+        name, emailAddress, gender, courseName, applicationStatus);
+    if (studentList == null || studentList.isEmpty()) {
+      return converter.convertDetails(studentList, Collections.emptyList(), Collections.emptyList());
+    }
+    List<String> studentIdList = studentList.stream()
+        .map(student -> student.getId())
+        .toList();
+    List<Course> courseList = repository.searchCoursesByStudentId(studentIdList);
+    List<ApplicationStatus> statusList = repository.searchStatusByStudentId(studentIdList);
+    return converter.convertDetails(studentList, courseList, statusList);
+  }
 
   /**
    * 受講生詳細検索です。
@@ -51,8 +69,28 @@ public class MainService {
    */
   public StudentDetail searchStudentId(String id) {
     Student student = repository.fetchById(id);
-    List<Course> courseList = repository.fetchCourseById(student.getId());
-    return new StudentDetail(student, courseList);
+    if (student == null) {
+      return null;
+    }
+    List<Student> studentList = List.of(student);
+    List<Course> fetchedCourseList = repository.fetchCourseById(student.getId());
+    List<Course> courseList = (fetchedCourseList == null)
+        ? Collections.emptyList()
+        : fetchedCourseList;
+
+    List<String> courseIdList =  courseList.stream()
+        .map(course -> course.getId())
+        .collect(Collectors.toList());
+    List<ApplicationStatus> statusList = (courseIdList.isEmpty())
+        ? Collections.emptyList()
+        : repository.fetchStatusByCourseIds(courseIdList);
+    List<StudentDetail> detailList = converter.convertDetails(studentList, courseList, statusList);
+    if (detailList.isEmpty()) {
+      return null;
+    } else {
+      return detailList.get(0);
+    }
+
   }
 
   /**
@@ -65,13 +103,45 @@ public class MainService {
   @Transactional
   public StudentDetail registerStudent(StudentDetail studentDetail) {
     Student student = studentDetail.getStudent();
-
     repository.registerStudent(student);
-    studentDetail.getCourseList().forEach(course -> {
+
+    studentDetail.getCourseDetailList().forEach(courseDetail -> {
+      Course course = courseDetail.getCourse();
+      ApplicationStatus status = Objects.requireNonNullElse(
+          courseDetail.getApplicationStatus(), new ApplicationStatus());
+      status.setApplicationStatus("仮申込");
+
       initStudentCourse(course, student);
       repository.registerCourse(course);
+      status.setCourseId(course.getId());
+      repository.registerStatus(status);
     });
     return studentDetail;
+  }
+
+  /**
+   * 受講生詳細の更新を行います。受講生と受講生コース情報をそれぞれ更新します。
+   *
+   * @param studentDetail　受講生詳細
+   */
+  @Transactional
+  public void updateStudent(StudentDetail studentDetail) {
+    studentDetail.getCourseDetailList().forEach(courseDetail -> {
+      repository.updateCourseName(courseDetail.getCourse());
+      Course course = courseDetail.getCourse();
+
+      ApplicationStatus status = Objects.requireNonNullElse(
+          courseDetail.getApplicationStatus(), new ApplicationStatus());
+      status.setCourseId(course.getId());
+
+      if (status.getId() == null) {
+        status.setApplicationStatus("仮申込");
+        repository.registerStatus(status);
+      } else {
+        repository.updateStatus(status);
+      }
+    });
+    repository.updateStudent(studentDetail.getStudent());
   }
 
   /**
@@ -84,17 +154,6 @@ public class MainService {
     course.setStudentId(student.getId());
     course.setCourseStartAt(String.valueOf(LocalDate.now()));
   }
-
-  /**
-   * 受講生詳細の更新を行います。受講生と受講生コース情報をそれぞれ更新します。
-   *
-   * @param studentDetail　受講生詳細
-   */
-  @Transactional
-  public void updateStudent(StudentDetail studentDetail) {
-    repository.updateStudent(studentDetail.getStudent());
-    studentDetail.getCourseList()
-        .forEach(course -> repository.updateCourseName(course));
-  }
-
 }
+
+
